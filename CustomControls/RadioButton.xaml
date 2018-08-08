@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RSPLMarketSurvey.CustomControls.RadioButton">
+    <ContentView.Content>
+        <TableView Intent="Settings" x:Name="RadioTableView" HasUnevenRows="True" HeightRequest="30"  >
+            <TableRoot   >
+                <TableSection >
+                    <ViewCell Tapped="Radio_Tapped"  Height="30" x:Name="RadioViewCell" >
+                        <StackLayout Orientation="Horizontal" x:Name="RadioParent"  >
+                       
+                            <Image x:Name="RadioImage" />
+                            <Label x:Name="RadioLabel" Text="Sample Text" VerticalOptions="Center" ></Label>
+                        </StackLayout>
+                    </ViewCell>
+                </TableSection>
+            </TableRoot>
+        </TableView>
+
+    </ContentView.Content>
+</ContentView>
