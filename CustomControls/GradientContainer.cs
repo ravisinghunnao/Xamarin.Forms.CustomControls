@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-namespace RSPLMarketSurvey.CustomControls
+namespace HS.Controls
 {
     public class GradientContainer : AbsoluteLayout
     {

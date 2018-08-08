@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 
-namespace RSPLMarketSurvey.CustomControls
+namespace HS.Controls
 {
   public static class BaseValidator
     {
