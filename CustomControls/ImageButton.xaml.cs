@@ -112,7 +112,8 @@ namespace HS.Controls
         public string FontFamily { get => (string)GetValue(FontFamilyProperty); set => SetValue(FontFamilyProperty, value); }
 
         public string Text { get => ImageButtonLabel.Text; set => ImageButtonLabel.Text = value; }
-        public object CommandParameter { get; internal set; }
+        public static BindableProperty CommandParameterProperty = BindableProperty.Create("CommandParameter", typeof(object), typeof(object)); public object CommandParameter { get => (object)GetValue(CommandParameterProperty); set => SetValue(CommandParameterProperty, value); }
+
 
         public static BindableProperty AspectProperty = BindableProperty.Create(propertyName: "Aspect", returnType: typeof(Aspect), declaringType: typeof(Aspect), defaultValue: Aspect.AspectFill);
         public Aspect Aspect { get => (Aspect)GetValue(AspectProperty); set => SetValue(AspectProperty, value); }
