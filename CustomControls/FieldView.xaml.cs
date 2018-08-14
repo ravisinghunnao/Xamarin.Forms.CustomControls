@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,9 +13,33 @@ namespace HS.Controls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FieldView : ContentView
     {
+        Label FieldViewColumn = new Label();
+        Label FieldViewValue = new Label();
+
         public FieldView()
         {
             InitializeComponent();
+            ArrangeControls();
+
+        }
+
+        private void ArrangeControls()
+        {
+            if (_RenderMode == RenderModeEnum.Horizontol)
+            {
+                Grid grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = new GridLength(ColumnWidth, GridUnitType.Absolute) }, new ColumnDefinition { Width = new GridLength(50, GridUnitType.Star) } }, RowDefinitions = new RowDefinitionCollection { } };
+                
+                grid.Children.Add(FieldViewColumn);
+                grid.Children.Add(FieldViewValue);
+                Grid.SetColumn(FieldViewColumn, 0);
+                Grid.SetColumn(FieldViewValue, 1);
+                slMain.Children.Add(grid);
+            }
+            else
+            {
+                slMain.Children.Add(FieldViewColumn);
+                slMain.Children.Add(FieldViewValue);
+            }
         }
 
         private string _FieldName = "";
@@ -32,18 +57,28 @@ namespace HS.Controls
         }
 
 
-        private string _FieldValue = "";
+       
         public string FieldValue
         {
             get
             {
-                return _FieldValue;
+               return GetValue(FieldValueProperty).ToString();
             }
             set
             {
-                _FieldValue = value;
-                FieldViewValue.Text = _FieldValue;
+                SetValue(FieldValueProperty, value);
+                
             }
+        }
+
+        
+        public static readonly BindableProperty FieldValueProperty = BindableProperty.Create("FieldValue", typeof(string), typeof(FieldView), "",BindingMode.TwoWay,propertyChanged:HandleFieldValuePropertyChanged);
+
+        private static void HandleFieldValuePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+
+            FieldView fieldView = (FieldView)bindable;
+            fieldView.FieldViewValue.Text = newValue.ToString();
         }
 
         private Style _FieldNameStyle ;
@@ -76,7 +111,7 @@ namespace HS.Controls
         }
 
 
-        private int _ColumnWidth = 200;
+        private int _ColumnWidth = 125;
         public int ColumnWidth
         {
             get
@@ -86,6 +121,7 @@ namespace HS.Controls
             set
             {
                 _ColumnWidth = value;
+                FieldViewColumn.MinimumHeightRequest = _ColumnWidth;
                 FieldViewColumn.WidthRequest = _ColumnWidth;
             }
         }
@@ -101,18 +137,11 @@ namespace HS.Controls
             set
             {
                 _RenderMode = value;
-                switch (_RenderMode)
-                {
-                    case RenderModeEnum.Horizontol:
-                        slMain.Orientation = StackOrientation.Horizontal;
-                        break;
-                    case RenderModeEnum.Vertical:
-                        slMain.Orientation = StackOrientation.Vertical;
-                        break;
-                }
+                ArrangeControls();
             }
         }
 
+        
 
         public enum RenderModeEnum
         {

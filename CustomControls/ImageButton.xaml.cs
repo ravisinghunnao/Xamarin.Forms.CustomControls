@@ -76,7 +76,7 @@ namespace HS.Controls
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
         {
             ImageButtonImage.Source = PressedImage;
-            OnClicked(null);
+            OnClicked(e);
             Device.StartTimer(TimeSpan.FromMilliseconds(50), () =>
             {
                 ImageButtonImage.Source = NormalImage;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -13,6 +14,8 @@ namespace HS.Controls
     {
         List<Element> elements = new List<Element>();
         private readonly string _ControlStyleID = "__grandientcontainerstyleid";
+        AbsoluteLayout backbuffor = new AbsoluteLayout();
+
 
         public enum BorderTypeEnum
         {
@@ -45,17 +48,140 @@ namespace HS.Controls
         }
         public GradientContainer()
         {
-
-
+         
+            RenderSequnce.AddRange(new List<RenderSequnceEnum> { RenderSequnceEnum.Gradient, RenderSequnceEnum.BackgroundImage, RenderSequnceEnum.Borders, RenderSequnceEnum.BoxViews, RenderSequnceEnum.Images });
+           
+            
         }
 
 
 
 
 
-        private void GenerateGradient()
+        private void RenderContainer()
         {
-            this.Children.Clear();
+            try
+            {
+               
+
+                Children.Clear();
+                GenerateGraphics();
+                
+                Children.Add(backbuffor);
+                SetLayoutBounds(backbuffor, Rectangle.FromLTRB(0, 0, 1, 1));
+                SetLayoutFlags(backbuffor, AbsoluteLayoutFlags.All);
+                foreach (Element item in elements)
+                {
+                    Children.Remove((View)item);
+                    Children.Add((View)item);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                
+            }
+        
+
+        }
+
+        private void GenerateGraphics()
+        {
+            backbuffor.Children.Clear();
+            backbuffor.StyleId = _ControlStyleID;
+            foreach (RenderSequnceEnum rs in RenderSequnce)
+            {
+                switch (rs)
+                {
+                    case RenderSequnceEnum.Gradient:
+                        GenerateGradientBoxes();
+                        break;
+                    case RenderSequnceEnum.BackgroundImage:
+                        GenerateBackgroundImages();
+                        break;
+                    case RenderSequnceEnum.Borders:
+                        GenerateBorders();
+                        break;
+                    case RenderSequnceEnum.BoxViews:
+                        GenerateBoxViews();
+                        break;
+                    case RenderSequnceEnum.Images:
+                        GenerateImages();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void GenerateBoxViews()
+        {
+            if (BoxViews != null)
+            {
+                foreach (BoxView bv in BoxViews)
+                {
+                    bv.StyleId = _ControlStyleID;
+                    backbuffor.Children.Add(bv);
+                }
+            }
+        }
+
+        private void GenerateBackgroundImages()
+        {
+            if (BackGroundImage != null)
+            {
+                double PatternWidth = Width / RepeatColumns;
+                double PatternHeight = Height / RepeatRows;
+                Image image = new Image { StyleId = _ControlStyleID, Source = BackGroundImage, WidthRequest = PatternWidth, HeightRequest = PatternHeight };
+                switch (RepeatDirection)
+                {
+                    case RepeatDirectionEnum.None:
+
+                        backbuffor.Children.Add(image);
+                        SetLayoutBounds(image, Rectangle.FromLTRB(0, 0, PatternWidth, PatternHeight));
+
+                        break;
+                    case RepeatDirectionEnum.RepeatHorizontal:
+
+                        for (int j = 0; j < Width; j += Convert.ToInt32(PatternWidth))
+                        {
+                            Image BGimage = new Image { StyleId = _ControlStyleID, Source = BackGroundImage, Aspect = Aspect.Fill };
+                            backbuffor.Children.Add(BGimage);
+                            SetLayoutBounds(BGimage, Rectangle.FromLTRB(j, 0, j + PatternWidth, PatternHeight));
+                        }
+
+                        break;
+
+                    case RepeatDirectionEnum.RepeatVertical:
+                        for (int i = 0; i < Height; i += Convert.ToInt32(PatternHeight))
+                        {
+
+                            Image BGimage = new Image { StyleId = _ControlStyleID, Source = BackGroundImage, Aspect = Aspect.Fill };
+                            backbuffor.Children.Add(BGimage);
+                            SetLayoutBounds(BGimage, Rectangle.FromLTRB(0, i, PatternWidth, i + PatternHeight));
+
+                        }
+                        break;
+                    case RepeatDirectionEnum.RepeatBoth:
+                        for (int i = 0; i < Height; i += Convert.ToInt32(PatternHeight))
+                        {
+                            for (int j = 0; j < Width; j += Convert.ToInt32(PatternWidth))
+                            {
+                                Image BGimage = new Image { StyleId = _ControlStyleID, Source = BackGroundImage, Aspect = Aspect.AspectFit };
+                                backbuffor.Children.Add(BGimage);
+                                SetLayoutBounds(BGimage, Rectangle.FromLTRB(j, i, j + PatternWidth, i + PatternHeight));
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void GenerateGradientBoxes()
+        {
             if (GradientOriantation != GradientOriantationEnum.None)
             {
                 Color GradientColor = StartColor;
@@ -92,8 +218,8 @@ namespace HS.Controls
                                         boxWidth = Width - i;
                                     }
                                     BoxView bvLine = new BoxView { HeightRequest = Height, WidthRequest = boxWidth, BackgroundColor = GradientColor };
-                                    this.Children.Add(bvLine);
-                                    AbsoluteLayout.SetLayoutBounds(bvLine, Rectangle.FromLTRB(i, 0, i + boxWidth, Height));
+                                    backbuffor.Children.Add(bvLine);
+                                    SetLayoutBounds(bvLine, Rectangle.FromLTRB(i, 0, i + boxWidth, Height));
                                 }
                                 break;
                             case GradientOriantationEnum.Vertical:
@@ -118,8 +244,8 @@ namespace HS.Controls
                                         boxHeight = Height - i;
                                     }
                                     BoxView bvLine = new BoxView { HeightRequest = boxHeight, WidthRequest = Width, BackgroundColor = GradientColor };
-                                    this.Children.Add(bvLine);
-                                    AbsoluteLayout.SetLayoutBounds(bvLine, Rectangle.FromLTRB(0, i, Width, i + boxHeight));
+                                    backbuffor.Children.Add(bvLine);
+                                    SetLayoutBounds(bvLine, Rectangle.FromLTRB(0, i, Width, i + boxHeight));
 
 
                                 }
@@ -143,8 +269,8 @@ namespace HS.Controls
                                     GradientColor = Color.FromRgb(r, g, b);
 
                                     BoxView bvLine = new BoxView { HeightRequest = Height - i, WidthRequest = Width - i, Color = GradientColor };
-                                    this.Children.Add(bvLine);
-                                    AbsoluteLayout.SetLayoutBounds(bvLine, Rectangle.FromLTRB(i, i, Width - i, Height - i));
+                                    backbuffor.Children.Add(bvLine);
+                                    SetLayoutBounds(bvLine, Rectangle.FromLTRB(i, i, Width - i, Height - i));
 
 
 
@@ -187,7 +313,7 @@ namespace HS.Controls
                                     }
 
                                     BoxView bvLine = new BoxView { StyleId = _ControlStyleID, HeightRequest = Height, WidthRequest = boxWidth, BackgroundColor = GradientColor };
-                                    this.Children.Add(bvLine);
+                                    backbuffor.Children.Add(bvLine);
                                     AbsoluteLayout.SetLayoutBounds(bvLine, Rectangle.FromLTRB(i, 0, i + boxWidth, Height));
                                 }
                                 break;
@@ -214,8 +340,8 @@ namespace HS.Controls
                                     }
 
                                     BoxView bvLine = new BoxView { StyleId = _ControlStyleID, HeightRequest = boxHeight, WidthRequest = Width, BackgroundColor = GradientColor };
-                                    this.Children.Add(bvLine);
-                                    AbsoluteLayout.SetLayoutBounds(bvLine, Rectangle.FromLTRB(0, i, Width, i + boxHeight));
+                                    backbuffor.Children.Add(bvLine);
+                                    SetLayoutBounds(bvLine, Rectangle.FromLTRB(0, i, Width, i + boxHeight));
 
 
                                 }
@@ -239,7 +365,7 @@ namespace HS.Controls
                                     GradientColor = Color.FromHsla(h, s, l);
 
                                     BoxView bvLine = new BoxView { StyleId = _ControlStyleID, HeightRequest = Height - i, WidthRequest = Width - i, Color = GradientColor };
-                                    Children.Add(bvLine);
+                                    backbuffor.Children.Add(bvLine);
                                     SetLayoutBounds(bvLine, Rectangle.FromLTRB(i, i, Width - i, Height - i));
 
 
@@ -253,96 +379,49 @@ namespace HS.Controls
 
                 }
             }
-
-            /////////////////////////////////////background image///////////////////////////////////////
-            if (BackGroundImage != null)
+        }
+        private void GenerateImages()
+        {
+            if (Images != null)
             {
-                double PatternWidth = Width / RepeatColumns;
-                double PatternHeight = Height / RepeatRows;
-                Image image = new Image { StyleId = _ControlStyleID, Source = BackGroundImage, WidthRequest = PatternWidth, HeightRequest = PatternHeight };
-                switch (RepeatDirection)
+                foreach (Image i in Images)
                 {
-                    case RepeatDirectionEnum.None:
-
-                        Children.Add(image);
-                        SetLayoutBounds(image, Rectangle.FromLTRB(0, 0, PatternWidth, PatternHeight));
-
-                        break;
-                    case RepeatDirectionEnum.RepeatHorizontal:
-
-                        for (int j = 0; j < Width; j += Convert.ToInt32(PatternWidth))
-                        {
-                            Image BGimage = new Image { StyleId = _ControlStyleID, Source = BackGroundImage, Aspect = Aspect.Fill };
-                            Children.Add(BGimage);
-                            SetLayoutBounds(BGimage, Rectangle.FromLTRB(j, 0, j + PatternWidth, PatternHeight));
-                        }
-
-                        break;
-
-                    case RepeatDirectionEnum.RepeatVertical:
-                        for (int i = 0; i < Height; i += Convert.ToInt32(PatternHeight))
-                        {
-
-                            Image BGimage = new Image { StyleId = _ControlStyleID, Source = BackGroundImage, Aspect = Aspect.Fill };
-                            Children.Add(BGimage);
-                            SetLayoutBounds(BGimage, Rectangle.FromLTRB(0, i, PatternWidth, i + PatternHeight));
-
-                        }
-                        break;
-                    case RepeatDirectionEnum.RepeatBoth:
-                        for (int i = 0; i < Height; i += Convert.ToInt32(PatternHeight))
-                        {
-                            for (int j = 0; j < Width; j += Convert.ToInt32(PatternWidth))
-                            {
-                                Image BGimage = new Image { StyleId = _ControlStyleID, Source = BackGroundImage, Aspect = Aspect.Fill };
-                                Children.Add(BGimage);
-                                SetLayoutBounds(BGimage, Rectangle.FromLTRB(j, i, j + PatternWidth, i + PatternHeight));
-                            }
-                        }
-                        break;
-                    default:
-                        break;
+                    i.StyleId = _ControlStyleID;
+                    backbuffor.Children.Add(i);
                 }
             }
 
-            //////////////////////////////////box views//////////////////////////////////////////////////
-            if (BoxViews != null)
-            {
-                foreach (BoxView bv in BoxViews)
-                {
-                    bv.StyleId = _ControlStyleID;
-                    Children.Add(bv);
-                }
-            }
 
-            ////////////////////////////////////////////border width///////////////////////////////////
+        }
 
+        private void GenerateBorders()
+        {
             if (BorderWidth > 0)
             {
                 if (BorderType == BorderTypeEnum.All || BorderType == BorderTypeEnum.Left || BorderType == BorderTypeEnum.LeftRight || BorderType == BorderTypeEnum.LeftTopRight || BorderType == BorderTypeEnum.RightBottomLeft || BorderType == BorderTypeEnum.BottomLeftTop)
                 {
                     BoxView bvLeft = new BoxView { StyleId = _ControlStyleID, WidthRequest = BorderWidth, BackgroundColor = BorderColor, HeightRequest = Height };
-                    Children.Add(bvLeft);
+                    backbuffor.Children.Add(bvLeft);
                     SetLayoutBounds(bvLeft, Rectangle.FromLTRB(0, 0, BorderWidth, Height));
                 }
                 if (BorderType == BorderTypeEnum.All || BorderType == BorderTypeEnum.Top || BorderType == BorderTypeEnum.TopBottom || BorderType == BorderTypeEnum.TopRightBottom || BorderType == BorderTypeEnum.BottomLeftTop || BorderType == BorderTypeEnum.LeftTopRight)
                 {
                     BoxView bvTop = new BoxView { StyleId = _ControlStyleID, WidthRequest = Width, BackgroundColor = BorderColor, HeightRequest = BorderWidth };
-                    Children.Add(bvTop);
+                    backbuffor.Children.Add(bvTop);
                     SetLayoutBounds(bvTop, Rectangle.FromLTRB(0, 0, Width, BorderWidth));
                 }
 
                 if (BorderType == BorderTypeEnum.All || BorderType == BorderTypeEnum.Right || BorderType == BorderTypeEnum.LeftRight || BorderType == BorderTypeEnum.RightBottomLeft || BorderType == BorderTypeEnum.LeftTopRight || BorderType == BorderTypeEnum.TopRightBottom)
                 {
                     BoxView bvRight = new BoxView { StyleId = _ControlStyleID, WidthRequest = BorderWidth, BackgroundColor = BorderColor, HeightRequest = Height };
-                    Children.Add(bvRight);
+                    backbuffor.Children.Add(bvRight);
                     SetLayoutBounds(bvRight, Rectangle.FromLTRB(Width - BorderWidth, 0, Width, Height));
                 }
 
                 if (BorderType == BorderTypeEnum.All || BorderType == BorderTypeEnum.Bottom || BorderType == BorderTypeEnum.TopBottom || BorderType == BorderTypeEnum.BottomLeftTop || BorderType == BorderTypeEnum.TopRightBottom || BorderType == BorderTypeEnum.RightBottomLeft)
                 {
                     BoxView bvBottom = new BoxView { StyleId = _ControlStyleID, WidthRequest = Width, BackgroundColor = BorderColor, HeightRequest = BorderWidth };
-                    Children.Add(bvBottom);
+                    backbuffor.Children.Add(bvBottom);
                     SetLayoutBounds(bvBottom, Rectangle.FromLTRB(0, Height - BorderWidth, Width - BorderWidth, Height));
                 }
 
@@ -353,17 +432,7 @@ namespace HS.Controls
 
 
             }
-
-
-
-
-            foreach (Element item in elements)
-            {
-                this.Children.Remove((View)item);
-                this.Children.Add((View)item);
-            }
         }
-
 
         protected override void OnChildAdded(Element child)
         {
@@ -384,10 +453,13 @@ namespace HS.Controls
             {
                 case "WIDTH":
                 case "HEIGHT":
-                    if (Height > 0 && Width > 0)
-                    {
-                        GenerateGradient();
-                    }
+                    
+                        if (Height > 0 && Width > 0 )
+                        {
+                            RenderContainer();
+                            
+                        }
+                    
                     break;
 
 
@@ -435,11 +507,26 @@ namespace HS.Controls
 
         public static BindableProperty RepeatRowsProperty = BindableProperty.Create("RepeatRows", typeof(int), typeof(int), 0);
         private List<BoxView> _boxViews = new List<BoxView>();
+        private List<Image> _images = new List<Image>();
+        private List<RenderSequnceEnum> _renderSequnce = new List<RenderSequnceEnum>();
+        private CancellationTokenSource tokenSource = new CancellationTokenSource();
+        private CancellationToken token;
 
         public int RepeatRows { get => (int)GetValue(RepeatRowsProperty); set => SetValue(RepeatRowsProperty, value); }
 
         public List<BoxView> BoxViews { get => _boxViews; set => _boxViews = value; }
+        public List<Image> Images { get => _images; set => _images = value; }
 
+        public enum RenderSequnceEnum
+        {
+            Gradient = 0,
+            BackgroundImage = 1,
+            Borders = 2,
+            BoxViews = 3,
+            Images = 4
+        }
+
+        public List<RenderSequnceEnum> RenderSequnce { get => _renderSequnce; set => _renderSequnce = value; }
 
 
     }

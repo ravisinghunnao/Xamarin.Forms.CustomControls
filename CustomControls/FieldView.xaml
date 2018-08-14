@@ -4,8 +4,7 @@
              x:Class="HS.Controls.FieldView">
     <ContentView.Content>
         <StackLayout x:Name="slMain">
-            <Label x:Name="FieldViewColumn"></Label>
-            <Label x:Name="FieldViewValue"></Label>
+          
         </StackLayout>
     </ContentView.Content>
 </ContentView>
