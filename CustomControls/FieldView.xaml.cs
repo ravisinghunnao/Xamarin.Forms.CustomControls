@@ -96,21 +96,17 @@ namespace HS.Controls
         }
 
 
-        private Style _FieldValueStyle ;
-        public Style FieldValueStyle
+        
+
+        public static BindableProperty FieldValueStyleProperty = BindableProperty.Create("FieldValueStyle", typeof(Style), typeof(Style),null,BindingMode.TwoWay,propertyChanged: HandleFieldValueStyleChanged);
+        public Style FieldValueStyle { get => (Style)GetValue(FieldValueStyleProperty); set  { SetValue(FieldValueStyleProperty, value); }  }
+
+        private static void HandleFieldValueStyleChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            get
-            {
-                return _FieldValueStyle;
-            }
-            set
-            {
-                _FieldValueStyle = value;
-                FieldViewValue.Style = _FieldValueStyle;
-            }
+
+            FieldView fieldView = (FieldView)bindable;
+            fieldView.FieldViewValue.Style = newValue as Style;
         }
-
-
         private int _ColumnWidth = 125;
         public int ColumnWidth
         {
