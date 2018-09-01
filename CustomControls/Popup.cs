@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace HS.Controls
@@ -13,9 +14,19 @@ namespace HS.Controls
 
         private bool _closeOnBackGroundClicked = true;
         private bool _IsOpen;
+        private List<Element> elements = new List<Element>();
+        StackLayout BackGroundLayout = null;
+        public enum AnimationEnum
+        {
+            None=0,
+            SlideLeft=1,
+            SlideRight=2,
+            SlideTop=3,
+            SlideBottom=4
+        }
 
-        List<Element> elements = new List<Element>();
-
+        public AnimationEnum EnterAnimation { get; set; }
+        public AnimationEnum ExitAnimation { get; set; }
 
         public Popup()
         {
@@ -93,7 +104,7 @@ namespace HS.Controls
                 AbsoluteLayout.SetLayoutFlags(oldContentStack, AbsoluteLayoutFlags.All);
                 oldContentStack.Children.Add(_OldContent);
                 absoluteLayout.Children.Add(oldContentStack);
-                StackLayout BackGroundLayout = new StackLayout { BackgroundColor = BackgroundLayerColor };
+                BackGroundLayout = new StackLayout { BackgroundColor = BackgroundLayerColor };
 
                 AbsoluteLayout.SetLayoutBounds(BackGroundLayout, Rectangle.FromLTRB(0, 0, 1, 1));
                 AbsoluteLayout.SetLayoutFlags(BackGroundLayout, AbsoluteLayoutFlags.All);
@@ -111,22 +122,80 @@ namespace HS.Controls
                 }
                 absoluteLayout.Children.Add(BackGroundLayout);
                 _CurrentPage.Content = absoluteLayout;
-
-
                 this.IsVisible = true;
+                ShowEnterAnimation();
+
+                
+                
+
+                
                 _IsOpen = true;
 
             }
         }
 
-        public void ClosePopup()
+        private void ShowEnterAnimation()
         {
-
-            _CurrentPage.Content = _OldContent;
-            _IsOpen = false;
+            switch (EnterAnimation)
+            {
+                case AnimationEnum.None:
+                    break;
+                case AnimationEnum.SlideLeft:
+                    BackGroundLayout.TranslationX = BackGroundLayout.Width;
+                    BackGroundLayout.TranslateTo(0, 0);
+                    break;
+                case AnimationEnum.SlideRight:
+                    BackGroundLayout.TranslationX = 0-BackGroundLayout.Width;
+                    BackGroundLayout.TranslateTo(0, 0);
+                    break;
+                case AnimationEnum.SlideTop:
+                    BackGroundLayout.TranslationY = BackGroundLayout.Height;
+                    BackGroundLayout.TranslateTo(0, 0);
+                    break;
+                case AnimationEnum.SlideBottom:
+                    BackGroundLayout.TranslationY = 0-BackGroundLayout.Height;
+                    BackGroundLayout.TranslateTo(0, 0);
+                    break;
+                default:
+                    break;
+            }
         }
 
+        public async void ClosePopup()
+        {
+            if (ExitAnimation != AnimationEnum.None)
+            {
+                await ShowExitAnimation();
+            }
+            _CurrentPage.Content = _OldContent;
+            _IsOpen = false;
+            
+        }
 
+        private  Task<bool> ShowExitAnimation()
+        {
+            Task<bool> task = null;
+            switch (ExitAnimation)
+            {
+                    
+                case AnimationEnum.SlideLeft:
+                    task = BackGroundLayout.TranslateTo(0-BackGroundLayout.Width, 0);
+                    break;
+                case AnimationEnum.SlideRight:
+                  
+                  task=  BackGroundLayout.TranslateTo(BackGroundLayout.Width, 0);
+                    break;
+                case AnimationEnum.SlideTop:
+                    task = BackGroundLayout.TranslateTo(0, 0-BackGroundLayout.Height);
+                    break;
+                case AnimationEnum.SlideBottom:
+                    task = BackGroundLayout.TranslateTo(0, BackGroundLayout.Height);
+                    break;
+                
+            }
+
+            return task;
+        }
 
         public bool CloseOnBackGroundClicked
         {
