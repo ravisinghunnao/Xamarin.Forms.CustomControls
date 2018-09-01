@@ -8,15 +8,19 @@ namespace HS.Controls
 {
     public class NavigationBar : Xamarin.Forms.ContentView
     {
-        StackLayout Bar = new StackLayout();
+        AbsoluteLayout Bar = new AbsoluteLayout();
+        StackLayout BarStack = new StackLayout();
         Label BackButtonLabel = new Label();
         Image BackButtonImage = new Image();
         Button BackButton = new Button();
         Label TitleLabel = new Label();
+        Image BarBackGround = null;
         public NavigationBar()
         {
 
             Controls.Clear();
+            BarBackGround = new Image {Aspect=BackGroundImageAspect };
+         
         }
 
         public static BindableProperty TitleProperty = BindableProperty.Create("Title", typeof(string), typeof(string), ""); public string Title { get => (string)GetValue(TitleProperty); set => SetValue(TitleProperty, value); }
@@ -35,6 +39,11 @@ namespace HS.Controls
         public static BindableProperty BackButtonBackgroundColorProperty = BindableProperty.Create("BackButtonBackgroundColor", typeof(Color), typeof(Color), Color.Transparent); public Color BackButtonBackgroundColor { get => (Color)GetValue(BackButtonBackgroundColorProperty); set => SetValue(BackButtonBackgroundColorProperty, value); }
         public static BindableProperty BackButtonImageSourceProperty = BindableProperty.Create("BackButtonImageSource", typeof(ImageSource), typeof(ImageSource), null); public ImageSource BackButtonImageSource { get => (ImageSource)GetValue(BackButtonImageSourceProperty); set => SetValue(BackButtonImageSourceProperty, value); }
         public static BindableProperty ControlsProperty = BindableProperty.Create("Controls", typeof(List<View>), typeof(List<View>), new List<View>());
+        public static BindableProperty BackGroundImageProperty = BindableProperty.Create("BackGroundImage", typeof(ImageSource), typeof(ImageSource), null); public ImageSource BackGroundImage { get => (ImageSource)GetValue(BackGroundImageProperty); set => SetValue(BackGroundImageProperty, value); }
+        public static BindableProperty BackGroundImageAspectProperty = BindableProperty.Create("BackGroundImageAspect", typeof(Aspect), typeof(Aspect), Aspect.AspectFill); public Aspect BackGroundImageAspect { get => (Aspect)GetValue(BackGroundImageAspectProperty); set => SetValue(BackGroundImageAspectProperty, value); }
+        public static BindableProperty OverlayColorProperty = BindableProperty.Create("OverlayColor", typeof(Color), typeof(Color), Color.Transparent); public Color OverlayColor { get => (Color)GetValue(OverlayColorProperty); set => SetValue(OverlayColorProperty, value); }
+
+
         private bool _showBackButton=true;
         private bool _showTitleText=true;
 
@@ -52,7 +61,7 @@ namespace HS.Controls
                 case "BARHEIGHT": Bar.HeightRequest = BarHeight; break;
                 case "BARCOLOR": Bar.BackgroundColor = BarColor; break;
                 case "TITLEFONTSIZE": TitleLabel.FontSize = TitleFontSize; break;
-                case "BARPADDING": Bar.Padding = BarPadding; break;
+                case "BARPADDING": BarStack.Padding = BarPadding; break;
                 case "TITLEFONTATTRIBUTE": TitleLabel.FontAttributes = TitleFontAttribute; break;
                 case "BACKBUTTONTEXT": BackButton.Text = BackButtonText; BackButtonLabel.Text = BackButtonText; break;
                 case "BACKBUTTONCOLOR": BackButton.TextColor = BackButtonColor; BackButtonLabel.TextColor = BackButtonColor; break;
@@ -72,13 +81,28 @@ namespace HS.Controls
                     TitleLabel.IsVisible = ShowTitleText;
 
                     break;
+                case "BACKGROUNDIMAGE":
+                    BarBackGround.Source = BackGroundImage;
+                    break;
+                case "OVERLAYCOLOR":
+                    BarStack.BackgroundColor = OverlayColor;
+                    break;
             }
         }
         protected override void OnParentSet()
         {
             base.OnParentSet();
+            Bar.Children.Add(BarBackGround);
+            AbsoluteLayout.SetLayoutBounds(BarBackGround, Rectangle.FromLTRB(0, 0, 1, 1));
+            AbsoluteLayout.SetLayoutFlags(BarBackGround, AbsoluteLayoutFlags.All);
+            Bar.Children.Add(BarStack);
+            AbsoluteLayout.SetLayoutBounds(BarStack, Rectangle.FromLTRB(0, 0, 1, 1));
+            AbsoluteLayout.SetLayoutFlags(BarStack, AbsoluteLayoutFlags.All);
+            BarStack.Orientation = StackOrientation.Horizontal;
+            Bar.HeightRequest = BarHeight;
+            Bar.BackgroundColor = BarColor;
+            BarStack.Padding = BarPadding;
 
-            Bar.Orientation = StackOrientation.Horizontal;
             switch (BackButtonType)
             {
                 case BackButtonTypeEnum.Label:
@@ -86,30 +110,28 @@ namespace HS.Controls
                     TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
                     tapGestureRecognizer.Tapped += TapGestureRecognizer_Tapped;
                     BackButtonLabel.GestureRecognizers.Add(tapGestureRecognizer);
-                    Bar.Children.Add(BackButtonLabel);
+                    BarStack.Children.Add(BackButtonLabel);
                     break;
                 case BackButtonTypeEnum.Image:
                     BackButtonImage = new Image { Source = BackButtonImageSource, BackgroundColor = BackButtonBackgroundColor, WidthRequest = ButtonWidth, VerticalOptions = LayoutOptions.CenterAndExpand, IsVisible = ShowBackButton };
-                    Bar.Children.Add(BackButtonImage);
+                    BarStack.Children.Add(BackButtonImage);
                     break;
                 case BackButtonTypeEnum.Button:
                     BackButton = new Button { Text = BackButtonText, TextColor = BackButtonColor, Image = BackButtonIcon, FontSize = BackButtonFontSize, BackgroundColor = BackButtonBackgroundColor, WidthRequest = ButtonWidth, FontAttributes = FontAttributes.Bold, VerticalOptions = LayoutOptions.CenterAndExpand, IsVisible = ShowBackButton };
-                    Bar.Children.Add(BackButton);
+                    BarStack.Children.Add(BackButton);
                     break;
 
             }
 
 
             TitleLabel = new Label { Text = Title, TextColor = TitleColor, FontSize = TitleFontSize, FontAttributes = TitleFontAttribute, VerticalOptions = LayoutOptions.CenterAndExpand, IsVisible = ShowTitleText };
-            Bar.Children.Add(TitleLabel);
-            Bar.HeightRequest = BarHeight;
-            Bar.BackgroundColor = BarColor;
-            Bar.Padding = BarPadding;
+            BarStack.Children.Add(TitleLabel);
+            
             foreach (var item in Controls)
             {
-                if (!(Bar.Children.Contains(item)))
+                if (!(BarStack.Children.Contains(item)))
                 {
-                    Bar.Children.Add(item);
+                    BarStack.Children.Add(item);
                 }
             }
 
