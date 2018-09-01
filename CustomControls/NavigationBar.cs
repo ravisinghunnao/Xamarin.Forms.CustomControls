@@ -34,9 +34,13 @@ namespace HS.Controls
         public static BindableProperty BackButtonTypeProperty = BindableProperty.Create("BackButtonType", typeof(BackButtonTypeEnum), typeof(BackButtonTypeEnum), BackButtonTypeEnum.Label); public BackButtonTypeEnum BackButtonType { get => (BackButtonTypeEnum)GetValue(BackButtonTypeProperty); set => SetValue(BackButtonTypeProperty, value); }
         public static BindableProperty BackButtonBackgroundColorProperty = BindableProperty.Create("BackButtonBackgroundColor", typeof(Color), typeof(Color), Color.Transparent); public Color BackButtonBackgroundColor { get => (Color)GetValue(BackButtonBackgroundColorProperty); set => SetValue(BackButtonBackgroundColorProperty, value); }
         public static BindableProperty BackButtonImageSourceProperty = BindableProperty.Create("BackButtonImageSource", typeof(ImageSource), typeof(ImageSource), null); public ImageSource BackButtonImageSource { get => (ImageSource)GetValue(BackButtonImageSourceProperty); set => SetValue(BackButtonImageSourceProperty, value); }
-        public static BindableProperty ControlsProperty = BindableProperty.Create("Controls", typeof(List<View>), typeof(List<View>), new List<View>()); public List<View> Controls { get => (List<View>)GetValue(ControlsProperty); set => SetValue(ControlsProperty, value); }
-        public bool ShowBackButton { get; set; }
-        public bool ShowTitleText { get; set; }
+        public static BindableProperty ControlsProperty = BindableProperty.Create("Controls", typeof(List<View>), typeof(List<View>), new List<View>());
+        private bool _showBackButton=true;
+        private bool _showTitleText=true;
+
+        public List<View> Controls { get => (List<View>)GetValue(ControlsProperty); set => SetValue(ControlsProperty, value); }
+        public bool ShowBackButton { get => _showBackButton; set => _showBackButton = value; }
+        public bool ShowTitleText { get => _showTitleText; set => _showTitleText = value; }
 
         protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

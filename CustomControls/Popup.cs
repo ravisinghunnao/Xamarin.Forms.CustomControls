@@ -206,7 +206,7 @@ namespace HS.Controls
         }
 
 
-        public Color BackgroundLayerColor { get; private set; }
+        public Color BackgroundLayerColor { get;  set; }
 
 
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
