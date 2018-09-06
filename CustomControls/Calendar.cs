@@ -323,7 +323,7 @@ namespace HS.Controls
 
         public static BindableProperty DisplayMonthProperty = BindableProperty.Create("DisplayMonth", typeof(int), typeof(int), DateTime.Today.Month); public int DisplayMonth { get => (int)GetValue(DisplayMonthProperty); set => SetValue(DisplayMonthProperty, value); }
 
-        public static BindableProperty BorderColorProperty = BindableProperty.Create("BorderColor", typeof(Color), typeof(Color), Color.Black); public Color BorderColor { get => (Color)GetValue(BorderColorProperty); set => SetValue(BorderColorProperty, value); }
+        public static BindableProperty BorderColorProperty = BindableProperty.Create("BorderColor", typeof(Color), typeof(Color), Color.Silver); public Color BorderColor { get => (Color)GetValue(BorderColorProperty); set => SetValue(BorderColorProperty, value); }
 
         public static BindableProperty DisplayYearProperty = BindableProperty.Create("DisplayYear", typeof(int), typeof(int), DateTime.Today.Year); public int DisplayYear { get => (int)GetValue(DisplayYearProperty); set => SetValue(DisplayYearProperty, value); }
 

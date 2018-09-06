@@ -10,23 +10,27 @@ namespace HS.Controls
     {
         private ContentPage _CurrentPage;
 
-        private View _OldContent=null;
+        private View _OldContent = null;
 
         private bool _closeOnBackGroundClicked = true;
         private bool _IsOpen;
         private List<Element> elements = new List<Element>();
-        StackLayout BackGroundLayout = null;
+        StackLayout ContentLayout = null;
+        StackLayout BackgroundLayout = null;
+        private AnimationEnum _enterAnimation=AnimationEnum.SlideDown;
+        private AnimationEnum _exitAnimation=AnimationEnum.SlideUp;
+
         public enum AnimationEnum
         {
-            None=0,
-            SlideLeft=1,
-            SlideRight=2,
-            SlideTop=3,
-            SlideBottom=4
+            None = 0,
+            SlideLeft = 1,
+            SlideRight = 2,
+            SlideUp = 3,
+            SlideDown = 4
         }
 
-        public AnimationEnum EnterAnimation { get; set; }
-        public AnimationEnum ExitAnimation { get; set; }
+        public AnimationEnum EnterAnimation { get => _enterAnimation; set => _enterAnimation = value; }
+        public AnimationEnum ExitAnimation { get => _exitAnimation; set => _exitAnimation = value; }
 
         public Popup()
         {
@@ -104,31 +108,35 @@ namespace HS.Controls
                 AbsoluteLayout.SetLayoutFlags(oldContentStack, AbsoluteLayoutFlags.All);
                 oldContentStack.Children.Add(_OldContent);
                 absoluteLayout.Children.Add(oldContentStack);
-                BackGroundLayout = new StackLayout { BackgroundColor = BackgroundLayerColor };
+                BackgroundLayout = new StackLayout { BackgroundColor = BackgroundLayerColor };
+                absoluteLayout.Children.Add(BackgroundLayout);
+                AbsoluteLayout.SetLayoutBounds(BackgroundLayout, Rectangle.FromLTRB(0, 0, 1, 1));
+                AbsoluteLayout.SetLayoutFlags(BackgroundLayout, AbsoluteLayoutFlags.All);
 
-                AbsoluteLayout.SetLayoutBounds(BackGroundLayout, Rectangle.FromLTRB(0, 0, 1, 1));
-                AbsoluteLayout.SetLayoutFlags(BackGroundLayout, AbsoluteLayoutFlags.All);
+                ContentLayout = new StackLayout {VerticalOptions=LayoutOptions.FillAndExpand,HorizontalOptions=LayoutOptions.FillAndExpand  };
+
+                
                 if (CloseOnBackGroundClicked)
                 {
                     TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
                     tapGestureRecognizer.Tapped += TapGestureRecognizer_Tapped;
-                    BackGroundLayout.GestureRecognizers.Add(tapGestureRecognizer);
+                    ContentLayout.GestureRecognizers.Add(tapGestureRecognizer);
                 }
 
 
                 foreach (var item in elements)
                 {
-                    BackGroundLayout.Children.Add((View)item);
+                    ContentLayout.Children.Add((View)item);
                 }
-                absoluteLayout.Children.Add(BackGroundLayout);
+                BackgroundLayout.Children.Add(ContentLayout);
                 _CurrentPage.Content = absoluteLayout;
                 this.IsVisible = true;
                 ShowEnterAnimation();
 
-                
-                
 
-                
+
+
+
                 _IsOpen = true;
 
             }
@@ -141,20 +149,20 @@ namespace HS.Controls
                 case AnimationEnum.None:
                     break;
                 case AnimationEnum.SlideLeft:
-                    BackGroundLayout.TranslationX = BackGroundLayout.Width;
-                    BackGroundLayout.TranslateTo(0, 0);
+                    ContentLayout.TranslationX = ContentLayout.Width;
+                    ContentLayout.TranslateTo(0, 0);
                     break;
                 case AnimationEnum.SlideRight:
-                    BackGroundLayout.TranslationX = 0-BackGroundLayout.Width;
-                    BackGroundLayout.TranslateTo(0, 0);
+                    ContentLayout.TranslationX = 0 - ContentLayout.Width;
+                    ContentLayout.TranslateTo(0, 0);
                     break;
-                case AnimationEnum.SlideTop:
-                    BackGroundLayout.TranslationY = BackGroundLayout.Height;
-                    BackGroundLayout.TranslateTo(0, 0);
+                case AnimationEnum.SlideUp:
+                    ContentLayout.TranslationY = ContentLayout.Height;
+                    ContentLayout.TranslateTo(0, 0);
                     break;
-                case AnimationEnum.SlideBottom:
-                    BackGroundLayout.TranslationY = 0-BackGroundLayout.Height;
-                    BackGroundLayout.TranslateTo(0, 0);
+                case AnimationEnum.SlideDown:
+                    ContentLayout.TranslationY = 0 - ContentLayout.Height;
+                    ContentLayout.TranslateTo(0, 0);
                     break;
                 default:
                     break;
@@ -169,29 +177,29 @@ namespace HS.Controls
             }
             _CurrentPage.Content = _OldContent;
             _IsOpen = false;
-            
+
         }
 
-        private  Task<bool> ShowExitAnimation()
+        private Task<bool> ShowExitAnimation()
         {
             Task<bool> task = null;
             switch (ExitAnimation)
             {
-                    
+
                 case AnimationEnum.SlideLeft:
-                    task = BackGroundLayout.TranslateTo(0-BackGroundLayout.Width, 0);
+                    task = ContentLayout.TranslateTo(0 - ContentLayout.Width, 0);
                     break;
                 case AnimationEnum.SlideRight:
-                  
-                  task=  BackGroundLayout.TranslateTo(BackGroundLayout.Width, 0);
+
+                    task = ContentLayout.TranslateTo(ContentLayout.Width, 0);
                     break;
-                case AnimationEnum.SlideTop:
-                    task = BackGroundLayout.TranslateTo(0, 0-BackGroundLayout.Height);
+                case AnimationEnum.SlideUp:
+                    task = ContentLayout.TranslateTo(0, 0 - ContentLayout.Height);
                     break;
-                case AnimationEnum.SlideBottom:
-                    task = BackGroundLayout.TranslateTo(0, BackGroundLayout.Height);
+                case AnimationEnum.SlideDown:
+                    task = ContentLayout.TranslateTo(0, ContentLayout.Height);
                     break;
-                
+
             }
 
             return task;
@@ -206,7 +214,7 @@ namespace HS.Controls
         }
 
 
-        public Color BackgroundLayerColor { get;  set; }
+        public Color BackgroundLayerColor { get; set; }
 
 
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
