@@ -92,15 +92,15 @@ namespace HS.Controls
         public bool IsReadOnly { get => _isReadOnly; set { _isReadOnly = value; txtValue.IsEnabled = !IsReadOnly; } }
         private void txtValue_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (int.TryParse(txtValue.Text, out int v))
-            {
-                Value = v;
+            //if (int.TryParse(txtValue.Text, out int v))
+            //{
+            //    Value = v;
 
-            }
-            else
-            {
-                txtValue.Text = Value.ToString();
-            }
+            //}
+            //else
+            //{
+            //    txtValue.Text = Value.ToString();
+            //}
         }
         public double InputWidth { get => txtValue.Width; set => txtValue.WidthRequest = value; }
         public object CommandParameter { get; internal set; }
