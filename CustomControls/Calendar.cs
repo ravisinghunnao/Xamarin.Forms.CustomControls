@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 namespace HS.Controls
 {
@@ -14,12 +15,19 @@ namespace HS.Controls
         Button btnPrevious = null;
         Button btnNext = null;
 
+
         AbsoluteLayout container = null;
         Image imgBackground = null;
         public event EventHandler NextButtonClicked;
         public event EventHandler PreviousButtonClicked;
         public event EventHandler DateClicked;
+        public event EventHandler BeforeRendering;
         public event EventHandler DateRendered;
+
+        protected virtual void OnBeforeRendering(EventArgs e)
+        {
+            BeforeRendering?.Invoke(this, e);
+        }
         protected virtual void OnDateRendering(EventArgs e)
         {
             DateRendered?.Invoke(this, e);
@@ -42,26 +50,35 @@ namespace HS.Controls
         public Calendar()
         {
 
-
+            OnBeforeRendering(null);
 
 
         }
+
 
         protected override void OnParentSet()
         {
             base.OnParentSet();
 
+
+        }
+
+        public void Render()
+        {
             BindCalendar();
         }
+
+
         private void BindCalendar()
         {
+
             this.Padding = 0;
             this.BackgroundColor = CalendarBackColor;
             int Year = DisplayYear;
             int Month = DisplayMonth;
-            
+
             CalendarGrid = new Grid
-            { 
+            {
                 RowSpacing = CellSpacing,
                 ColumnSpacing = CellSpacing,
                 RowDefinitions = new RowDefinitionCollection { new RowDefinition { }, new RowDefinition { }, new RowDefinition { }, new RowDefinition { }, new RowDefinition { }, new RowDefinition { }, new RowDefinition { }, },
@@ -70,19 +87,34 @@ namespace HS.Controls
 
             btnPrevious = new Button { Text = "<", IsVisible = ShowPreviousMonth, BackgroundColor = NavigationBackgroundColor, TextColor = NavigationTextColor };
             btnPrevious.Clicked += BtnPrevious_Clicked;
-            Label lblMonthName = new Label { TextColor = MonthTextColor, FontAttributes = FontAttributes.Bold, VerticalOptions = LayoutOptions.CenterAndExpand, Text = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Month).ToString() + " " + Year, HorizontalOptions = LayoutOptions.CenterAndExpand };
+            Label lblMonthName = new Label { TextColor = MonthTextColor, FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label)), FontAttributes = FontAttributes.Bold, VerticalOptions = LayoutOptions.CenterAndExpand, Text = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Month).ToString() + " " + Year, HorizontalOptions = LayoutOptions.CenterAndExpand };
             btnNext = new Button { Text = ">", IsVisible = ShowNextMonth, BackgroundColor = NavigationBackgroundColor, TextColor = NavigationTextColor };
             btnNext.Clicked += BtnNext_Clicked;
-
+            BoxView bvPrevious = new BoxView { BackgroundColor = TitleBarColor, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
+            CalendarGrid.Children.Add(bvPrevious);
+            Grid.SetColumn(bvPrevious, 0);
+            Grid.SetRow(bvPrevious, 0);
             CalendarGrid.Children.Add(btnPrevious);
             Grid.SetColumn(btnPrevious, 0);
             Grid.SetRow(btnPrevious, 0);
 
+
+
+            BoxView bvMonthName = new BoxView { BackgroundColor = TitleBarColor, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
+            CalendarGrid.Children.Add(bvMonthName);
+            Grid.SetColumn(bvMonthName, 1);
+            Grid.SetRow(bvMonthName, 0);
+            Grid.SetColumnSpan(bvMonthName, 5);
             CalendarGrid.Children.Add(lblMonthName);
             Grid.SetColumn(lblMonthName, 1);
             Grid.SetRow(lblMonthName, 0);
             Grid.SetColumnSpan(lblMonthName, 5);
 
+
+            BoxView bvNext = new BoxView { BackgroundColor = TitleBarColor, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
+            CalendarGrid.Children.Add(bvNext);
+            Grid.SetColumn(bvNext, 6);
+            Grid.SetRow(bvNext, 0);
             CalendarGrid.Children.Add(btnNext);
             Grid.SetColumn(btnNext, 6);
             Grid.SetRow(btnNext, 0);
@@ -90,9 +122,13 @@ namespace HS.Controls
 
             for (int i = 0; i < 7; i++)
             {
+                BoxView dayNameBackground = new BoxView { BackgroundColor = DayNameBackgroundColor, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
                 string DayName = ((DayOfWeek)i).ToString();
-                lblDayName = new Label { Text = DayName.Substring(0, 3), TextColor = DayNameTextColor,HorizontalOptions=LayoutOptions.CenterAndExpand,VerticalOptions=LayoutOptions.CenterAndExpand};
+                lblDayName = new Label { Text = DayName.Substring(0, 3), TextColor = DayNameTextColor, HorizontalOptions = LayoutOptions.CenterAndExpand, VerticalOptions = LayoutOptions.CenterAndExpand };
+                CalendarGrid.Children.Add(dayNameBackground);
                 CalendarGrid.Children.Add(lblDayName);
+                Grid.SetColumn(dayNameBackground, i);
+                Grid.SetRow(dayNameBackground, 1);
                 Grid.SetColumn(lblDayName, i);
                 Grid.SetRow(lblDayName, 1);
             }
@@ -168,7 +204,7 @@ namespace HS.Controls
 
 
                 }
-                
+
                 slCellContainer.StyleId = item.DayNumber.ToString();
                 CalendarGrid.Children.Add(slCellContainer);
                 if (item.DayType == 2)
@@ -192,25 +228,26 @@ namespace HS.Controls
             container = new AbsoluteLayout();
 
 
-        
+
 
             imgBackground = new Image { Source = CalendarBackgroundImage };
-            
-            
+
+
             container.Children.Add(imgBackground);
             AbsoluteLayout.SetLayoutBounds(imgBackground, Rectangle.FromLTRB(0, 0, 1, 1));
             AbsoluteLayout.SetLayoutFlags(imgBackground, AbsoluteLayoutFlags.All);
 
 
-            
- 
+
+
 
 
             container.Children.Add(CalendarGrid);
             AbsoluteLayout.SetLayoutBounds(CalendarGrid, Rectangle.FromLTRB(0, 0, 1, 1));
             AbsoluteLayout.SetLayoutFlags(CalendarGrid, AbsoluteLayoutFlags.All);
-            Frame frame = new Frame { BorderColor = BorderColor, CornerRadius = BorderRadius,Padding=5,HasShadow=HasShadow };
+            Frame frame = new Frame { BorderColor = BorderColor, CornerRadius = BorderRadius, Padding = 5, HasShadow = HasShadow };
             frame.Content = container;
+
             this.Content = frame;
 
 
@@ -223,7 +260,23 @@ namespace HS.Controls
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
         {
             SelectedDate = new DateTime(DisplayYear, DisplayMonth, Convert.ToInt32(((StackLayout)sender).StyleId));
+            SelectedItem = (StackLayout)sender;
+
             DateClicked(sender, e);
+
+            StackLayout stackLayout = (StackLayout)sender;
+            _OldBGColor = stackLayout.BackgroundColor;
+            stackLayout.BackgroundColor = SelectionColor;
+
+            Device.StartTimer(TimeSpan.FromMilliseconds(250), () =>
+            {
+
+
+                stackLayout.BackgroundColor = _OldBGColor;
+                return false;
+
+
+            });
         }
 
         private void BtnNext_Clicked(object sender, EventArgs e)
@@ -284,10 +337,10 @@ namespace HS.Controls
                         lblOtherMonthDayNumber.TextColor = OtherMonthDayColor;
                     }
                     break;
-                case "DISPLAYMONTH":
-                case "DISPLAYYEAR":
-                    BindCalendar();
-                    break;
+                //case "DISPLAYMONTH":
+                //case "DISPLAYYEAR":
+                //    BindCalendar();
+                //    break;
                 case "DATECOLOR":
                     if (lblCurrentMonthDayNumber != null)
                     {
@@ -315,7 +368,7 @@ namespace HS.Controls
             }
         }
 
-        public new static BindableProperty BackgroundColorProperty = BindableProperty.Create("BackgroundColor", typeof(Color), typeof(Color), Color.White); public  Color CalendarBackColor { get => (Color)GetValue(BackgroundColorProperty); set => SetValue(BackgroundColorProperty, value); }
+        public new static BindableProperty BackgroundColorProperty = BindableProperty.Create("BackgroundColor", typeof(Color), typeof(Color), Color.White); public Color CalendarBackColor { get => (Color)GetValue(BackgroundColorProperty); set => SetValue(BackgroundColorProperty, value); }
 
         public static BindableProperty CellWidthProperty = BindableProperty.Create("CellWidth", typeof(double), typeof(double), 30.0); public double CellWidth { get => (double)GetValue(CellWidthProperty); set => SetValue(CellWidthProperty, value); }
 
@@ -330,6 +383,7 @@ namespace HS.Controls
         public static BindableProperty DateColorProperty = BindableProperty.Create("DateColor", typeof(Color), typeof(Color), Color.Black); public Color DateColor { get => (Color)GetValue(DateColorProperty); set => SetValue(DateColorProperty, value); }
 
         public static BindableProperty SelectedDateProperty = BindableProperty.Create("SelectedDate", typeof(DateTime), typeof(DateTime), DateTime.Today); public DateTime SelectedDate { get => (DateTime)GetValue(SelectedDateProperty); set => SetValue(SelectedDateProperty, value); }
+        public StackLayout SelectedItem { get; private set; }
 
         public static BindableProperty ShowPreviousMonthProperty = BindableProperty.Create("ShowPreviousMonth", typeof(bool), typeof(bool), true); public bool ShowPreviousMonth { get => (bool)GetValue(ShowPreviousMonthProperty); set => SetValue(ShowPreviousMonthProperty, value); }
         public static BindableProperty ShowNextMonthProperty = BindableProperty.Create("ShowNextMonth", typeof(bool), typeof(bool), true); public bool ShowNextMonth { get => (bool)GetValue(ShowNextMonthProperty); set => SetValue(ShowNextMonthProperty, value); }
@@ -350,8 +404,18 @@ namespace HS.Controls
 
         public static BindableProperty CalendarBackgroundImageProperty = BindableProperty.Create("CalendarBackgroundImage", typeof(ImageSource), typeof(ImageSource), null); public ImageSource CalendarBackgroundImage { get => (ImageSource)GetValue(CalendarBackgroundImageProperty); set => SetValue(CalendarBackgroundImageProperty, value); }
         public static BindableProperty BorderWidthProperty = BindableProperty.Create("BorderWidth", typeof(double), typeof(double), 1.0); public double BorderWidth { get => (double)GetValue(BorderWidthProperty); set => SetValue(BorderWidthProperty, value); }
-        public static BindableProperty HasShadowProperty = BindableProperty.Create("HasShadow", typeof(bool), typeof(bool), false); public bool HasShadow { get => (bool)GetValue(HasShadowProperty); set => SetValue(HasShadowProperty, value); }
+        public static BindableProperty HasShadowProperty = BindableProperty.Create("HasShadow", typeof(bool), typeof(bool), false);
+        private Color _OldBGColor;
+        private Color _selectionColor = Color.Orange;
+        private Color _dayNameBackgroundColor = Color.White;
+        private Color _titleBarColor = Color.LightBlue;
+        
 
+        public bool HasShadow { get => (bool)GetValue(HasShadowProperty); set => SetValue(HasShadowProperty, value); }
+        public Color SelectionColor { get => _selectionColor; set => _selectionColor = value; }
+        public Color DayNameBackgroundColor { get => _dayNameBackgroundColor; set => _dayNameBackgroundColor = value; }
+        public Color TitleBarColor { get => _titleBarColor; set => _titleBarColor = value; }
+        
     }
 
 
