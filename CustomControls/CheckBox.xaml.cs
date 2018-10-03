@@ -56,12 +56,22 @@ namespace HS.Controls
 
         protected virtual void OnCheckedChange(EventArgs e)
         {
+            if (Checked)
+            {
+                CheckImage.Source = CheckedImage;
+            }
+            else
+            {
+                CheckImage.Source = UnCheckedImage;
+            }
             CheckedChange?.Invoke(this, e);
         }
 
         protected void Check_Tapped(object sender, EventArgs e)
         {
             Checked = !Checked;
+           
+           
         }
 
         private string _Value = "";
@@ -177,8 +187,8 @@ namespace HS.Controls
 
        
 
-        private Boolean _Checked = false;
-        public Boolean Checked
+      
+        public bool Checked
         {
             get
             {
@@ -207,7 +217,7 @@ namespace HS.Controls
             }
         }
 
-        public static readonly BindableProperty CheckedProperty = BindableProperty.Create("Checked", typeof(Boolean), typeof(Boolean), false);
+        public static readonly BindableProperty CheckedProperty = BindableProperty.Create("Checked", typeof(bool), typeof(bool), false);
 
         public Label LabelControl
         {
@@ -233,6 +243,16 @@ namespace HS.Controls
             }
         }
 
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+            switch (propertyName.ToUpper()) 
+            {
+                case "CHECKED":
+                    OnCheckedChange(null);
+                    break;
+            }
+        }
 
     }
 }

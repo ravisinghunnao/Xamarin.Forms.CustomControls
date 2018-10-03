@@ -56,6 +56,18 @@ namespace HS.Controls
 
         protected virtual void OnCheckedChange(EventArgs e)
         {
+            if (Checked)
+            {
+                RadioImage.Source = CheckedImage;
+            }
+            else
+            {
+                RadioImage.Source = UnCheckedImage;
+            }
+            if (this.Checked)
+            {
+                OnCheckedChange(null);
+            }
             CheckedChange?.Invoke(this, e);
         }
 
@@ -78,6 +90,8 @@ namespace HS.Controls
                     }
                 }
                 this.Checked = true;
+                CheckedChange?.Invoke(this, e);
+
 
             }
 
@@ -250,6 +264,17 @@ namespace HS.Controls
             get
             {
                 return RadioParent;
+            }
+        }
+
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+            switch (propertyName.ToUpper())
+            {
+                case "CHECKED":
+                    OnCheckedChange(null);
+                    break;
             }
         }
 
