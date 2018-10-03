@@ -196,18 +196,18 @@ namespace HS.Controls
             }
         }
 
-        private Boolean _Checked = false;
+       
         public Boolean Checked
         {
             get
             {
-                return _Checked;
+                return (Boolean)GetValue(CheckedProperty);
             }
             set
             {
-                _Checked = value;
+                SetValue(CheckedProperty, value);
 
-                if (_Checked)
+                if (Checked)
                 {
 
                     RadioImage.Source = CheckedImage;
@@ -225,6 +225,9 @@ namespace HS.Controls
 
             }
         }
+
+
+        public static readonly BindableProperty CheckedProperty = BindableProperty.Create("Checked", typeof(Boolean), typeof(Boolean), false);
 
         public Label LabelControl
         {
