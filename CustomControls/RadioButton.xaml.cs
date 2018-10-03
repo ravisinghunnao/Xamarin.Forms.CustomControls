@@ -64,10 +64,7 @@ namespace HS.Controls
             {
                 RadioImage.Source = UnCheckedImage;
             }
-            if (this.Checked)
-            {
-                OnCheckedChange(null);
-            }
+          
             CheckedChange?.Invoke(this, e);
         }
 
