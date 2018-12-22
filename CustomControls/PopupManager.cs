@@ -43,22 +43,22 @@ namespace NIFShopping.CustomControls
                 var tempContent = RootPage.Content;
                 RootPage.Content = null;
                 AbsoluteLayout absoluteLayout = new AbsoluteLayout { };
-                StackLayout oldContentStack = new StackLayout {Spacing=0 };
+                StackLayout oldContentStack = new StackLayout { Spacing = 0 };
                 AbsoluteLayout.SetLayoutBounds(oldContentStack, Rectangle.FromLTRB(0, 0, 1, 1));
                 AbsoluteLayout.SetLayoutFlags(oldContentStack, AbsoluteLayoutFlags.All);
                 oldContentStack.Children.Add(tempContent);
                 absoluteLayout.Children.Add(oldContentStack);
-                BackgroundLayout = new StackLayout { BackgroundColor = Color.FromRgba(0, 0, 0, 0.5),Spacing=0 };
+                BackgroundLayout = new StackLayout { BackgroundColor = Color.FromRgba(0, 0, 0, 0.5), Spacing = 0 };
                 absoluteLayout.Children.Add(BackgroundLayout);
                 AbsoluteLayout.SetLayoutBounds(BackgroundLayout, Rectangle.FromLTRB(0, 0, 1, 1));
                 AbsoluteLayout.SetLayoutFlags(BackgroundLayout, AbsoluteLayoutFlags.All);
 
                 BackgroundLayout.IsVisible = false;
                 grid = new Grid { HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
-                boxView = new BoxView { HorizontalOptions=LayoutOptions.FillAndExpand,VerticalOptions=LayoutOptions.FillAndExpand };
+                boxView = new BoxView { HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
                 grid.Children.Add(boxView);
-               // PopupContentLayout = new StackLayout { Spacing=0,BackgroundColor=Color.Green };
-               // grid.Children.Add(PopupContentLayout);
+                // PopupContentLayout = new StackLayout { Spacing=0,BackgroundColor=Color.Green };
+                // grid.Children.Add(PopupContentLayout);
                 BackgroundLayout.Children.Add(grid);
                 RootPage.Content = absoluteLayout;
 
@@ -111,21 +111,18 @@ namespace NIFShopping.CustomControls
                     BackgroundLayout.BackgroundColor = popup.BackgroundLayerColor;
 
 
-                    foreach (var item in popup.Children)
-                    {
-                        PopupControls.Add(item);
 
-                    }
+                    PopupControls.Add(popup.Content);
 
-                    foreach (var item in PopupControls)
-                    {
-                        if (PopupContentLayout == null)
-                        {
-                            PopupContentLayout = item;
-                        }
-                        popup.Children.Remove(item);
-                        grid.Children.Add(item);
-                    }
+
+
+
+
+                    PopupContentLayout = popup.Content;
+
+                    popup.Content = null;
+                    grid.Children.Add(PopupControls[0]);
+
 
 
                     if (popup.CloseOnBackGroundClicked)
@@ -133,7 +130,7 @@ namespace NIFShopping.CustomControls
 
                         TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
                         tapGestureRecognizer.Tapped += TapGestureRecognizer_Tapped;
-                        
+
                         boxView.GestureRecognizers.Add(tapGestureRecognizer);
                     }
 
@@ -243,12 +240,11 @@ namespace NIFShopping.CustomControls
                 BackgroundLayout.IsVisible = false;
                 CurrentPopup.IsVisible = false;
                 CurrentPopup.IsOpen = false;
-                foreach (var item in PopupControls)
-                {
 
-                    BackgroundLayout.Children.Remove(item);
-                    CurrentPopup.Children.Add(item);
-                }
+
+                BackgroundLayout.Children.Remove(PopupControls[0]);
+                CurrentPopup.Content = PopupControls[0];
+
 
                 PopupControls.Clear();
 
@@ -268,9 +264,9 @@ namespace NIFShopping.CustomControls
 
         private async void TapGestureRecognizer_Tapped(object sender, EventArgs e)
         {
-             
-                await ClosePopup(CurrentPopup);
-            
+
+            await ClosePopup(CurrentPopup);
+
         }
     }
 }

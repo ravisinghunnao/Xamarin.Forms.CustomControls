@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace NIFShopping.CustomControls
 {
-    public class PopupExtended : StackLayout
+    public class PopupExtended : ContentView
     {
 
 
