@@ -6,16 +6,16 @@ using Xamarin.Forms;
 
 namespace NIFShopping.CustomControls
 {
-    public class PopupExtended : Xamarin.Forms.StackLayout
+    public class PopupExtended : StackLayout
     {
-   
 
-       
+
+
 
         private bool _closeOnBackGroundClicked = true;
         public bool IsOpen { get; set; }
         private List<Element> elements = new List<Element>();
-        public Color BackgroundLayerColor { get; set; }
+        public Color BackgroundLayerColor { get => _backgroundLayerColor; set => _backgroundLayerColor = value; }
 
         public bool CloseOnBackGroundClicked
         {
@@ -25,8 +25,9 @@ namespace NIFShopping.CustomControls
             }
         }
 
-        private AnimationEnum _enterAnimation=AnimationEnum.SlideDown;
-        private AnimationEnum _exitAnimation=AnimationEnum.SlideUp;
+        private AnimationEnum _enterAnimation = AnimationEnum.SlideDown;
+        private AnimationEnum _exitAnimation = AnimationEnum.SlideUp;
+        private Color _backgroundLayerColor=Color.FromRgba(0,0,0,0.7);
 
         public enum AnimationEnum
         {
@@ -45,28 +46,28 @@ namespace NIFShopping.CustomControls
             this.IsVisible = false;
             this.HeightRequest = 0;
             this.WidthRequest = 0;
-        
- 
+
+
 
 
         }
 
 
-       
-     
 
-        
 
- 
 
- 
 
- 
 
- 
 
-     
 
- 
+
+
+
+
+
+
+
+
+
     }
 }
