@@ -9,12 +9,12 @@ namespace NIFShopping.CustomControls
 {
     class PopupManager : Xamarin.Forms.View
     {
-        
-     
 
 
 
-              StackLayout ContentLayout = null;
+
+
+        StackLayout PopupContentLayout = null;
         StackLayout BackgroundLayout = null;
 
         private List<View> _popupControls;
@@ -27,7 +27,7 @@ namespace NIFShopping.CustomControls
         {
             this.IsVisible = false;
 
-         
+
 
 
         }
@@ -39,21 +39,24 @@ namespace NIFShopping.CustomControls
             {
                 RootPage = page;
 
-              
-                    AbsoluteLayout absoluteLayout = new AbsoluteLayout();
-                    StackLayout oldContentStack = new StackLayout { };
-                    AbsoluteLayout.SetLayoutBounds(oldContentStack, Rectangle.FromLTRB(0, 0, 1, 1));
-                    AbsoluteLayout.SetLayoutFlags(oldContentStack, AbsoluteLayoutFlags.All);
-                    oldContentStack.Children.Add(RootPage.Content);
-                    absoluteLayout.Children.Add(oldContentStack);
-                    BackgroundLayout = new StackLayout { BackgroundColor = Color.FromRgba(0, 0, 0, 0.5) };
-                    absoluteLayout.Children.Add(BackgroundLayout);
-                    AbsoluteLayout.SetLayoutBounds(BackgroundLayout, Rectangle.FromLTRB(0, 0, 1, 1));
-                    AbsoluteLayout.SetLayoutFlags(BackgroundLayout, AbsoluteLayoutFlags.All);
-                    ContentLayout = new StackLayout { VerticalOptions = LayoutOptions.FillAndExpand, HorizontalOptions = LayoutOptions.FillAndExpand };
-                    BackgroundLayout.IsVisible = false;
-                    RootPage.Content = absoluteLayout;
-                 
+                var tempContent = RootPage.Content;
+                RootPage.Content = null;
+                AbsoluteLayout absoluteLayout = new AbsoluteLayout { };
+                StackLayout oldContentStack = new StackLayout {Spacing=0 };
+                AbsoluteLayout.SetLayoutBounds(oldContentStack, Rectangle.FromLTRB(0, 0, 1, 1));
+                AbsoluteLayout.SetLayoutFlags(oldContentStack, AbsoluteLayoutFlags.All);
+                oldContentStack.Children.Add(tempContent);
+                absoluteLayout.Children.Add(oldContentStack);
+                BackgroundLayout = new StackLayout { BackgroundColor = Color.FromRgba(0, 0, 0, 0.5),Spacing=0 };
+                absoluteLayout.Children.Add(BackgroundLayout);
+                AbsoluteLayout.SetLayoutBounds(BackgroundLayout, Rectangle.FromLTRB(0, 0, 1, 1));
+                AbsoluteLayout.SetLayoutFlags(BackgroundLayout, AbsoluteLayoutFlags.All);
+
+                BackgroundLayout.IsVisible = false;
+                PopupContentLayout = new StackLayout { VerticalOptions = LayoutOptions.FillAndExpand, HorizontalOptions = LayoutOptions.FillAndExpand,Spacing=0 };
+                BackgroundLayout.Children.Add(PopupContentLayout);
+                RootPage.Content = absoluteLayout;
+
             }
             catch (Exception ex)
             {
@@ -61,8 +64,8 @@ namespace NIFShopping.CustomControls
                 RootPage.DisplayAlert("Exception", ex.Message, "OK");
             }
         }
-       
-    
+
+
 
         public ContentPage RootPage { get; set; }
         public List<View> PopupControls
@@ -112,7 +115,7 @@ namespace NIFShopping.CustomControls
                     foreach (var item in PopupControls)
                     {
                         popup.Children.Remove(item);
-                        ContentLayout.Children.Add(item);
+                        PopupContentLayout.Children.Add(item);
                     }
 
 
@@ -121,12 +124,12 @@ namespace NIFShopping.CustomControls
 
                         TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
                         tapGestureRecognizer.Tapped += TapGestureRecognizer_Tapped;
-                        ContentLayout.GestureRecognizers.Add(tapGestureRecognizer);
+                        BackgroundLayout.GestureRecognizers.Add(tapGestureRecognizer);
                     }
 
 
 
-                    BackgroundLayout.Children.Add(ContentLayout);
+
 
                     popup.IsVisible = true;
                     BackgroundLayout.IsVisible = true;
@@ -145,7 +148,7 @@ namespace NIFShopping.CustomControls
 
                 RootPage.DisplayAlert("Exception", ex.Message, "OK");
             }
-          
+
         }
 
         public PopupExtended CurrentPopup { get; set; }
@@ -156,20 +159,20 @@ namespace NIFShopping.CustomControls
                 case AnimationEnum.None:
                     break;
                 case AnimationEnum.SlideLeft:
-                    ContentLayout.TranslationX = ContentLayout.Width;
-                    ContentLayout.TranslateTo(0, 0);
+                    PopupContentLayout.TranslationX = PopupContentLayout.Width;
+                    PopupContentLayout.TranslateTo(0, 0);
                     break;
                 case AnimationEnum.SlideRight:
-                    ContentLayout.TranslationX = 0 - ContentLayout.Width;
-                    ContentLayout.TranslateTo(0, 0);
+                    PopupContentLayout.TranslationX = 0 - PopupContentLayout.Width;
+                    PopupContentLayout.TranslateTo(0, 0);
                     break;
                 case AnimationEnum.SlideUp:
-                    ContentLayout.TranslationY = ContentLayout.Height;
-                    ContentLayout.TranslateTo(0, 0);
+                    PopupContentLayout.TranslationY = PopupContentLayout.Height;
+                    PopupContentLayout.TranslateTo(0, 0);
                     break;
                 case AnimationEnum.SlideDown:
-                    ContentLayout.TranslationY = 0 - ContentLayout.Height;
-                    ContentLayout.TranslateTo(0, 0);
+                    PopupContentLayout.TranslationY = 0 - PopupContentLayout.Height;
+                    PopupContentLayout.TranslateTo(0, 0);
                     break;
                 default:
                     break;
@@ -187,18 +190,18 @@ namespace NIFShopping.CustomControls
 
                 if (CurrentPopup.ExitAnimation != AnimationEnum.None)
                 {
-                  await   ShowExitAnimation();
+                    await ShowExitAnimation();
                 }
-               
-               
+
+
             }
             catch (Exception ex)
             {
 
-              await  RootPage.DisplayAlert("Exception", ex.Message, "OK");
+                await RootPage.DisplayAlert("Exception", ex.Message, "OK");
             }
 
-         
+
 
 
         }
@@ -210,22 +213,23 @@ namespace NIFShopping.CustomControls
             {
 
                 case AnimationEnum.SlideLeft:
-                    task = ContentLayout.TranslateTo(0 - ContentLayout.Width, 0);
+                    task = PopupContentLayout.TranslateTo(0 - PopupContentLayout.Width, 0);
                     break;
                 case AnimationEnum.SlideRight:
 
-                    task = ContentLayout.TranslateTo(ContentLayout.Width, 0);
+                    task = PopupContentLayout.TranslateTo(PopupContentLayout.Width, 0);
                     break;
                 case AnimationEnum.SlideUp:
-                    task = ContentLayout.TranslateTo(0, 0 - ContentLayout.Height);
+                    task = PopupContentLayout.TranslateTo(0, 0 - PopupContentLayout.Height);
                     break;
                 case AnimationEnum.SlideDown:
-                    task = ContentLayout.TranslateTo(0, ContentLayout.Height);
+                    task = PopupContentLayout.TranslateTo(0, PopupContentLayout.Height);
                     break;
 
             }
 
-            task.ContinueWith(b => {
+            task.ContinueWith(b =>
+            {
                 BackgroundLayout.IsVisible = false;
                 CurrentPopup.IsVisible = false;
                 CurrentPopup.IsOpen = false;
@@ -240,7 +244,7 @@ namespace NIFShopping.CustomControls
 
                 CurrentPopup = null;
 
-            },TaskScheduler.FromCurrentSynchronizationContext());
+            }, TaskScheduler.FromCurrentSynchronizationContext());
 
             return task;
         }
