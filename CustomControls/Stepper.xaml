@@ -14,9 +14,9 @@
                     <ColumnDefinition Width="33*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
             
-            <Button x:Name="btnMinus" BackgroundColor="Transparent" Image="minus.png" Grid.Column="0" Grid.Row="0" VerticalOptions="Center" HorizontalOptions="End"/>
+            <Image x:Name="btnMinus" BackgroundColor="Transparent" Aspect="Fill" Source="minus.png" Grid.Column="0" Grid.Row="0" VerticalOptions="Center" HorizontalOptions="End"/>
                 <Entry  x:Name="txtValue" HorizontalTextAlignment="Center" IsEnabled="False" WidthRequest="50" Keyboard="Numeric" Text="1" Grid.Column="1" Grid.Row="0" VerticalOptions="Center" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" TextChanged="txtValue_TextChanged"></Entry>
-                <Button x:Name="btnPlus" BackgroundColor="Transparent" Image="plus.png" Grid.Column="2" Grid.Row="0" VerticalOptions="Center" HorizontalOptions="Start"/>
+                <Image x:Name="btnPlus" BackgroundColor="Transparent" Aspect="Fill" Source="plus.png" Grid.Column="2" Grid.Row="0" VerticalOptions="Center" HorizontalOptions="Start"/>
             </Grid>
         </StackLayout>
   </ContentView.Content>

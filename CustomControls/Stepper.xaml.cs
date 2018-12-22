@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace HS.Controls
+namespace NIFShopping.CustomControls
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Stepper : ContentView
@@ -19,6 +19,12 @@ namespace HS.Controls
 
         public event EventHandler PlusButtonClicked;
         public event EventHandler MinusButtonClicked;
+        public event EventHandler ValueChanged;
+
+        public virtual void OnValueChanged(EventArgs e)
+        {
+            ValueChanged?.Invoke(this, e);
+        }
 
         public virtual void OnMinusButtonClicked(EventArgs e)
         {
@@ -32,8 +38,17 @@ namespace HS.Controls
         public Stepper()
         {
             InitializeComponent();
-            btnPlus.Clicked += BtnPlus_Clicked;
-            btnMinus.Clicked += BtnMinus_Clicked;
+            btnPlus.HeightRequest = ButtonHeight;
+            btnPlus.WidthRequest = ButtonWidth;
+            btnMinus.HeightRequest = ButtonHeight;
+            btnMinus.WidthRequest = ButtonWidth;
+            TapGestureRecognizer plusGestureRecognizer = new TapGestureRecognizer();
+            plusGestureRecognizer.Tapped += BtnPlus_Clicked;
+            btnPlus.GestureRecognizers.Add(plusGestureRecognizer);
+            TapGestureRecognizer minusGestureRecognizer = new TapGestureRecognizer();
+            minusGestureRecognizer.Tapped += BtnMinus_Clicked;
+            btnMinus.GestureRecognizers.Add(minusGestureRecognizer);
+            
         }
 
         private void BtnMinus_Clicked(object sender, EventArgs e)
@@ -43,6 +58,7 @@ namespace HS.Controls
             {
                 MinusButtonClicked(this, e);
             }
+         
         }
 
         private void BtnPlus_Clicked(object sender, EventArgs e)
@@ -52,6 +68,7 @@ namespace HS.Controls
             {
                 PlusButtonClicked(this, e);
             }
+            
 
         }
         protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -101,8 +118,19 @@ namespace HS.Controls
             //{
             //    txtValue.Text = Value.ToString();
             //}
+            if (ValueChanged != null)
+            {
+                ValueChanged(this, e);
+            }
         }
         public double InputWidth { get => txtValue.Width; set => txtValue.WidthRequest = value; }
         public object CommandParameter { get; internal set; }
+
+        public static BindableProperty ButtonHeightProperty = BindableProperty.Create("ButtonHeight", typeof(double), typeof(double), 14.0);
+        public double ButtonHeight { get => (double)GetValue(ButtonHeightProperty); set => SetValue(ButtonHeightProperty, value); }
+
+        public static BindableProperty ButtonWidthProperty = BindableProperty.Create("ButtonWidth", typeof(double), typeof(double), 14.0);
+        public double ButtonWidth { get => (double)GetValue(ButtonWidthProperty); set => SetValue(ButtonWidthProperty, value); }
+
     }
 }

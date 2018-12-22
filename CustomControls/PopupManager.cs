@@ -176,7 +176,7 @@ namespace NIFShopping.CustomControls
             }
         }
 
-        public  void ClosePopup(PopupExtended popup)
+        public async void ClosePopup(PopupExtended popup)
         {
             try
             {
@@ -187,26 +187,15 @@ namespace NIFShopping.CustomControls
 
                 if (CurrentPopup.ExitAnimation != AnimationEnum.None)
                 {
-                     ShowExitAnimation();
+                  await   ShowExitAnimation();
                 }
-                BackgroundLayout.IsVisible = false;
-                popup.IsVisible = false;
-                CurrentPopup.IsOpen = false;
-                foreach (var item in PopupControls)
-                {
-
-                    BackgroundLayout.Children.Remove(item);
-                    popup.Children.Add(item);
-                }
-
-                PopupControls.Clear();
-
-                CurrentPopup = null;
+               
+               
             }
             catch (Exception ex)
             {
 
-                RootPage.DisplayAlert("Exception", ex.Message, "OK");
+              await  RootPage.DisplayAlert("Exception", ex.Message, "OK");
             }
 
          
@@ -235,6 +224,23 @@ namespace NIFShopping.CustomControls
                     break;
 
             }
+
+            task.ContinueWith(b => {
+                BackgroundLayout.IsVisible = false;
+                CurrentPopup.IsVisible = false;
+                CurrentPopup.IsOpen = false;
+                foreach (var item in PopupControls)
+                {
+
+                    BackgroundLayout.Children.Remove(item);
+                    CurrentPopup.Children.Add(item);
+                }
+
+                PopupControls.Clear();
+
+                CurrentPopup = null;
+
+            },TaskScheduler.FromCurrentSynchronizationContext());
 
             return task;
         }
