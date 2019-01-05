@@ -18,6 +18,7 @@ namespace RSPLMarketSurvey.CustomControls
         private bool _displayOnlySingleContent = true;
         StackLayout mainContainer = null;
         private bool _animating = false;
+        private double _barSapcing=1;
 
         public CollapsibleExpander()
         {
@@ -41,7 +42,7 @@ namespace RSPLMarketSurvey.CustomControls
         public void init()
         {
             this.Content = null;
-            mainContainer = new StackLayout { };
+            mainContainer = new StackLayout { Spacing = BarSapcing };
             if (ExpandableItems != null)
             {
                 int itemIndex = 0;
@@ -50,7 +51,7 @@ namespace RSPLMarketSurvey.CustomControls
 
                     item._Key = itemIndex.ToString();
 
-                    StackLayout subContainer = new StackLayout { HorizontalOptions = LayoutOptions.FillAndExpand, IsClippedToBounds = true };
+                    StackLayout subContainer = new StackLayout { HorizontalOptions = LayoutOptions.FillAndExpand, IsClippedToBounds = true,Spacing=0 };
                     StackLayout titleBar = new StackLayout { StyleId = "titlebar_" + itemIndex.ToString(), HeightRequest = TitleHeight, BackgroundColor = TitleBackColor, Orientation = StackOrientation.Horizontal, HorizontalOptions = LayoutOptions.FillAndExpand };
 
                     item._TitleBarLayout = titleBar;
@@ -58,14 +59,14 @@ namespace RSPLMarketSurvey.CustomControls
                     TapGestureRecognizer titleBar_TapGestureRecognizer = new TapGestureRecognizer();
                     titleBar_TapGestureRecognizer.Tapped += TitleBar_TapGestureRecognizer_Tapped;
                     titleBar.GestureRecognizers.Add(titleBar_TapGestureRecognizer);
-                    Image image = new Image { Source = CollapseImage, WidthRequest = ImageWidth, HeightRequest = ImageHeight };
+                    Image image = new Image { Source = CollapseImage, WidthRequest = ImageWidth, HeightRequest = ImageHeight, Margin = new Thickness(5, 0, 0, 0) };
                     item._TitleIcon = image;
 
 
                     Label TitleLabel = new Label { Text = item.Title, TextColor = TitleTextColor, FontAttributes = TitleFontAttributes, FontFamily = TitleFontFamily, FontSize = TitleFontSize, LineBreakMode = LineBreakMode.TailTruncation };
                     titleBar.Children.Add(image);
                     titleBar.Children.Add(TitleLabel);
-                    StackLayout ContentLayout = new StackLayout { StyleId = "content_" + itemIndex.ToString(), Padding = ContentPadding, HorizontalOptions = LayoutOptions.FillAndExpand };
+                    StackLayout ContentLayout = new StackLayout {BackgroundColor=ContentBackgroundColor, StyleId = "content_" + itemIndex.ToString(), Padding = ContentPadding, HorizontalOptions = LayoutOptions.FillAndExpand };
 
                     item._ContentLayout = ContentLayout;
 
@@ -78,10 +79,10 @@ namespace RSPLMarketSurvey.CustomControls
                     subContainer.Children.Add(ContentLayout);
                     mainContainer.Children.Add(subContainer);
 
-                    
-                    
-                    
-                    
+
+
+
+
 
                     itemIndex += 1;
                 }
@@ -119,10 +120,10 @@ namespace RSPLMarketSurvey.CustomControls
                             expandableItem.Expanded = true;
                         }
                         break;
-                    
+
                 }
 
-               
+
 
             }
 
@@ -186,7 +187,7 @@ namespace RSPLMarketSurvey.CustomControls
                     expandableItem._TitleIcon.Source = CollapseImage;
                 }
 
-              
+
 
 
 
@@ -243,7 +244,7 @@ namespace RSPLMarketSurvey.CustomControls
             switch (ExpandAnimation)
             {
                 case AnimationEnum.None:
-                   
+
                     item.IsVisible = true;
                     Animating = false;
                     //await item.FadeTo(1);
@@ -278,7 +279,7 @@ namespace RSPLMarketSurvey.CustomControls
         }
 
 
-        
+
         public enum ExpandModeEnum
         {
 
@@ -287,7 +288,7 @@ namespace RSPLMarketSurvey.CustomControls
             UserDefined = 2
         }
 
-     
+
         public ExpandModeEnum ExpandMode { get; set; }
 
         public bool AutoCollapseInactiveItems { get => _displayOnlySingleContent; set => _displayOnlySingleContent = value; }
@@ -311,6 +312,8 @@ namespace RSPLMarketSurvey.CustomControls
         public AnimationEnum CollapseAnimation { get; set; }
         private View ContentToAnimate { get; set; }
         private bool Animating { get => _animating; set => _animating = value; }
+        public double BarSapcing { get => _barSapcing; set => _barSapcing = value; }
+        public Color ContentBackgroundColor { get;  set; }
     }
 
     public class ExpandableItem
