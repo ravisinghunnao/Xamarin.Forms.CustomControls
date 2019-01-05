@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -18,7 +19,7 @@ namespace RSPLMarketSurvey.CustomControls
         private bool _displayOnlySingleContent = true;
         StackLayout mainContainer = null;
         private bool _animating = false;
-        private double _barSapcing=1;
+        private double _barSapcing = 1;
 
         public CollapsibleExpander()
         {
@@ -51,7 +52,11 @@ namespace RSPLMarketSurvey.CustomControls
 
                     item._Key = itemIndex.ToString();
 
-                    StackLayout subContainer = new StackLayout { HorizontalOptions = LayoutOptions.FillAndExpand, IsClippedToBounds = true,Spacing=0 };
+                    StackLayout subContainer = new StackLayout { HorizontalOptions = LayoutOptions.FillAndExpand, IsClippedToBounds = true, Spacing = 0 };
+                    Grid grid = new Grid { HorizontalOptions = LayoutOptions.FillAndExpand, RowSpacing = 0, ColumnSpacing = 0 };
+                    grid.RowDefinitions.Add(new RowDefinition {Height=TitleHeight});
+                    grid.RowDefinitions.Add(new RowDefinition { });
+                    
                     StackLayout titleBar = new StackLayout { StyleId = "titlebar_" + itemIndex.ToString(), HeightRequest = TitleHeight, BackgroundColor = TitleBackColor, Orientation = StackOrientation.Horizontal, HorizontalOptions = LayoutOptions.FillAndExpand };
 
                     item._TitleBarLayout = titleBar;
@@ -66,17 +71,32 @@ namespace RSPLMarketSurvey.CustomControls
                     Label TitleLabel = new Label { Text = item.Title, TextColor = TitleTextColor, FontAttributes = TitleFontAttributes, FontFamily = TitleFontFamily, FontSize = TitleFontSize, LineBreakMode = LineBreakMode.TailTruncation };
                     titleBar.Children.Add(image);
                     titleBar.Children.Add(TitleLabel);
-                    StackLayout ContentLayout = new StackLayout {BackgroundColor=ContentBackgroundColor, StyleId = "content_" + itemIndex.ToString(), Padding = ContentPadding, HorizontalOptions = LayoutOptions.FillAndExpand };
+                    StackLayout ContentLayout = new StackLayout { BackgroundColor = ContentBackgroundColor, StyleId = "content_" + itemIndex.ToString(), Padding = ContentPadding, HorizontalOptions = LayoutOptions.FillAndExpand };
 
                     item._ContentLayout = ContentLayout;
 
                     ContentLayout.SizeChanged += ContentLayout_SizeChanged;
 
                     ContentLayout.Children.Add(item.Content);
+                    Image titleBackgroundImage = new Image { Source = TitletBackgroundImageSource, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, Aspect = Aspect.AspectFill };
+                    grid.Children.Add(titleBackgroundImage);
+                    Grid.SetRow(titleBackgroundImage, 0);
+                    Grid.SetColumn(titleBackgroundImage, 0);
+                    grid.Children.Add(titleBar);
+                    Grid.SetRow(titleBar, 0);
+                    Grid.SetColumn(titleBar, 0);
 
+                    Image ContentBackgroundImage = new Image { Source = ContentBackgroundImageSource, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, Aspect = Aspect.AspectFill };
+                    item._ContentBackgroundImage = ContentBackgroundImage;
+                    
 
-                    subContainer.Children.Add(titleBar);
-                    subContainer.Children.Add(ContentLayout);
+                    grid.Children.Add(ContentBackgroundImage);
+                    Grid.SetColumn(ContentBackgroundImage, 0);
+                    Grid.SetRow(ContentBackgroundImage, 1);
+                    grid.Children.Add(ContentLayout);
+                    Grid.SetColumn(ContentLayout, 0);
+                    Grid.SetRow(ContentLayout, 1);
+                    subContainer.Children.Add(grid);
                     mainContainer.Children.Add(subContainer);
 
 
@@ -90,6 +110,7 @@ namespace RSPLMarketSurvey.CustomControls
             this.Content = mainContainer;
         }
 
+       
         private void ContentLayout_SizeChanged(object sender, EventArgs e)
         {
             if (Animating == false)
@@ -137,7 +158,7 @@ namespace RSPLMarketSurvey.CustomControls
                 {
                     return;
                 }
-                StackLayout subContainer = (StackLayout)((StackLayout)sender).Parent;
+                StackLayout subContainer = (StackLayout)((StackLayout)sender).Parent.Parent;
                 int itemIndex = Convert.ToInt32(((StackLayout)sender).StyleId.Split('_')[1]);
                 bool ContentVisible = false;
 
@@ -151,7 +172,7 @@ namespace RSPLMarketSurvey.CustomControls
                         {
                             item._ContentLayout.IsVisible = false;
                             item._TitleIcon.Source = CollapseImage;
-                            item.Expanded = true;
+                            item.Expanded = false;
                         }
                     }
                 }
@@ -313,7 +334,9 @@ namespace RSPLMarketSurvey.CustomControls
         private View ContentToAnimate { get; set; }
         private bool Animating { get => _animating; set => _animating = value; }
         public double BarSapcing { get => _barSapcing; set => _barSapcing = value; }
-        public Color ContentBackgroundColor { get;  set; }
+        public Color ContentBackgroundColor { get; set; }
+        public ImageSource ContentBackgroundImageSource { get;  set; }
+        public ImageSource TitletBackgroundImageSource { get;  set; }
     }
 
     public class ExpandableItem
@@ -322,10 +345,13 @@ namespace RSPLMarketSurvey.CustomControls
         internal string _Key;
         public string Title { get; set; }
         internal Image _TitleIcon { get; set; }
+        internal Image _ContentBackgroundImage {get;set;}
         internal StackLayout _ContentLayout { get; set; }
         internal StackLayout _TitleBarLayout { get; set; }
         public View Content { get; set; }
         public double ItemHeight { get; set; }
-        public bool Expanded { get => _Expanded; set => _Expanded = value; }
+        public bool Expanded { get => _Expanded; set { _Expanded = value;_ContentBackgroundImage.IsVisible = _Expanded; } }
+
+        
     }
 }
