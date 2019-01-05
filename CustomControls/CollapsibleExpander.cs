@@ -48,17 +48,27 @@ namespace RSPLMarketSurvey.CustomControls
                 foreach (var item in ExpandableItems)
                 {
 
+                    item._Key = itemIndex.ToString();
+
                     StackLayout subContainer = new StackLayout { HorizontalOptions = LayoutOptions.FillAndExpand, IsClippedToBounds = true };
                     StackLayout titleBar = new StackLayout { StyleId = "titlebar_" + itemIndex.ToString(), HeightRequest = TitleHeight, BackgroundColor = TitleBackColor, Orientation = StackOrientation.Horizontal, HorizontalOptions = LayoutOptions.FillAndExpand };
+
+                    item._TitleBarLayout = titleBar;
+
                     TapGestureRecognizer titleBar_TapGestureRecognizer = new TapGestureRecognizer();
                     titleBar_TapGestureRecognizer.Tapped += TitleBar_TapGestureRecognizer_Tapped;
                     titleBar.GestureRecognizers.Add(titleBar_TapGestureRecognizer);
                     Image image = new Image { Source = CollapseImage, WidthRequest = ImageWidth, HeightRequest = ImageHeight };
+                    item._TitleIcon = image;
+
 
                     Label TitleLabel = new Label { Text = item.Title, TextColor = TitleTextColor, FontAttributes = TitleFontAttributes, FontFamily = TitleFontFamily, FontSize = TitleFontSize, LineBreakMode = LineBreakMode.TailTruncation };
                     titleBar.Children.Add(image);
                     titleBar.Children.Add(TitleLabel);
                     StackLayout ContentLayout = new StackLayout { StyleId = "content_" + itemIndex.ToString(), Padding = ContentPadding, HorizontalOptions = LayoutOptions.FillAndExpand };
+
+                    item._ContentLayout = ContentLayout;
+
                     ContentLayout.SizeChanged += ContentLayout_SizeChanged;
 
                     ContentLayout.Children.Add(item.Content);
@@ -68,10 +78,10 @@ namespace RSPLMarketSurvey.CustomControls
                     subContainer.Children.Add(ContentLayout);
                     mainContainer.Children.Add(subContainer);
 
-                    item._Key = itemIndex.ToString();
-                    item._TitleIcon = image;
-                    item._ContentLayout = ContentLayout;
-                    item._TitleBarLayout = titleBar;
+                    
+                    
+                    
+                    
 
                     itemIndex += 1;
                 }
@@ -84,28 +94,32 @@ namespace RSPLMarketSurvey.CustomControls
             if (Animating == false)
             {
                 int itemIndex = Convert.ToInt32(((StackLayout)sender).StyleId.Split('_')[1]);
-                ExpandableItems[itemIndex].ItemHeight = ((StackLayout)sender).Height;
+                ExpandableItem expandableItem = ExpandableItems[itemIndex];
+                expandableItem.ItemHeight = expandableItem._ContentLayout.Height;
 
                 switch (ExpandMode)
                 {
                     case ExpandModeEnum.CollapseAll:
-                        ((StackLayout)sender).IsVisible = false;
+                        expandableItem._ContentLayout.IsVisible = false;
+                        expandableItem.Expanded = false;
                         break;
                     case ExpandModeEnum.ExpandAll:
-                        ((StackLayout)sender).IsVisible = true;
+                        expandableItem._ContentLayout.IsVisible = true;
+                        expandableItem.Expanded = true;
                         break;
                     case ExpandModeEnum.UserDefined:
-                        if (ExpandableItems[itemIndex].Expanded == false)
+                        if (expandableItem.Expanded == false)
                         {
-                            ((StackLayout)sender).IsVisible = false;
+                            expandableItem._ContentLayout.IsVisible = false;
+                            expandableItem.Expanded = false;
                         }
                         else
                         {
-                            ((StackLayout)sender).IsVisible = true;
+                            expandableItem._ContentLayout.IsVisible = true;
+                            expandableItem.Expanded = true;
                         }
                         break;
-                    default:
-                        break;
+                    
                 }
 
                
