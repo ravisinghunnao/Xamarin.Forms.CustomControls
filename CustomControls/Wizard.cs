@@ -57,9 +57,7 @@ namespace RSPLMarketSurvey.CustomControls
                 Padding = ContentPadding,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 BackgroundColor = ContentBackgroundColor,
-                Children ={
-                            WizardSteps[ActiveIndex].Content
-                        }
+               
             };
 
             ContentLayout.SizeChanged += ContentLayout_SizeChanged;
@@ -158,6 +156,8 @@ namespace RSPLMarketSurvey.CustomControls
                     }
                 }
             };
+
+            ChangeContent();
         }
 
         private void ContentLayout_SizeChanged(object sender, EventArgs e)
