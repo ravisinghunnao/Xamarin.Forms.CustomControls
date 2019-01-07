@@ -13,7 +13,7 @@ namespace RSPLMarketSurvey.CustomControls
         private double _imageHeight = 32;
         private double _titleFontSize = 14;
         private double _titleHeight = 50;
-        private Color _titleBackColor = Color.DarkGray;
+        private Color _titleBackColor = Color.FromHex("#0066cc");
         private Color _titleTextColor = Color.White;
         private FontAttributes _titleFontAttributes = FontAttributes.Bold;
         private Thickness _contentPadding = 5;
