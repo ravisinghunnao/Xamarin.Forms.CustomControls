@@ -373,6 +373,7 @@ namespace RSPLMarketSurvey.CustomControls
                     {
                         if (item.Height >= ContentHeight)
                         {
+                            item.HeightRequest = -1;
                             Animating = false;
                             return false;
                         }
