@@ -27,7 +27,7 @@ namespace RSPLMarketSurvey.CustomControls
         private static ImageSource _collapseImage;
        
         private static bool _autoCollapseInactiveItems = true;
-        private bool _initilized = false;
+        private bool _ExpandModeExecuted;
 
         public CollapsibleExpander()
         {
@@ -124,7 +124,7 @@ namespace RSPLMarketSurvey.CustomControls
                     }
                 }
                 this.Content = mainContainer;
-                _initilized = true;
+               
             }
             catch (Exception ex)
             {
@@ -144,12 +144,11 @@ namespace RSPLMarketSurvey.CustomControls
            // ExpandableItems.Find(f=>f._Key==itemIndex.ToString())._SubContainer.HeightRequest= ((StackLayout)sender).Height;
             if (Animating == false)
             {
-                if (!_initilized)
-                {
-
+         
                     ExpandableItem expandableItem = ExpandableItems[itemIndex];
                     expandableItem.ItemHeight = expandableItem._ContentLayout.Height;
-
+                if (_ExpandModeExecuted == false)
+                {
                     switch (ExpandMode)
                     {
                         case ExpandModeEnum.CollapseAll:
@@ -174,6 +173,8 @@ namespace RSPLMarketSurvey.CustomControls
                             break;
 
                     }
+
+                    _ExpandModeExecuted = true;
 
                 }
 
