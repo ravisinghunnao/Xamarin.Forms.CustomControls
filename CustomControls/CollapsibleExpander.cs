@@ -27,7 +27,7 @@ namespace RSPLMarketSurvey.CustomControls
         private static ImageSource _collapseImage;
        
         private static bool _autoCollapseInactiveItems = true;
-        private bool _ExpandModeExecuted;
+        private int _ExpandModeExecutionCount=0;
 
         public CollapsibleExpander()
         {
@@ -147,8 +147,9 @@ namespace RSPLMarketSurvey.CustomControls
          
                     ExpandableItem expandableItem = ExpandableItems[itemIndex];
                     expandableItem.ItemHeight = expandableItem._ContentLayout.Height;
-                if (_ExpandModeExecuted == false)
+                if (_ExpandModeExecutionCount <ExpandableItems.Count)
                 {
+                    
                     switch (ExpandMode)
                     {
                         case ExpandModeEnum.CollapseAll:
@@ -174,7 +175,7 @@ namespace RSPLMarketSurvey.CustomControls
 
                     }
 
-                    _ExpandModeExecuted = true;
+                    _ExpandModeExecutionCount++;
 
                 }
 
