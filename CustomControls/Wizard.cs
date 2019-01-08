@@ -27,10 +27,10 @@ namespace RSPLMarketSurvey.CustomControls
         private static ImageSource _titleIcon;
         private static Thickness _footerPadding = 10;
         private static Color _footerBackgroundColor = Color.FromHex("#0066cc");
-        private static double _buttonFontSize=Device.GetNamedSize(NamedSize.Large,typeof(Button));
-        private static Color _buttonTextColor= Color.FromHex("#0066cc");
-        private static Color _buttonBackgroundColor=Color.White;
-        private static int _buttonCornerRadius=25;
+        private static double _buttonFontSize = Device.GetNamedSize(NamedSize.Large, typeof(Button));
+        private static Color _buttonTextColor = Color.FromHex("#0066cc");
+        private static Color _buttonBackgroundColor = Color.White;
+        private static int _buttonCornerRadius = 25;
 
         public Wizard()
         {
@@ -263,40 +263,74 @@ namespace RSPLMarketSurvey.CustomControls
 
         }
 
-        public ImageSource TitleIcon { get => _titleIcon; set => _titleIcon = value; }
-        public string TitleText { get; set; }
-        public FontAttributes TitleFontAttributes { get => _titleFontAttributes; set => _titleFontAttributes = value; }
+
+        public FontAttributes TitleFontAttributes { get => (FontAttributes)GetValue(TitleFontAttributesProperty); set => SetValue(TitleFontAttributesProperty, value); }
         public static readonly BindableProperty TitleFontAttributesProperty = BindableProperty.Create("TitleFontAttributes", typeof(FontAttributes), typeof(FontAttributes), _titleFontAttributes);
 
-        public string TitleFontFamily { get; set; }
+        public string TitleFontFamily { get => (string)GetValue(TitleFontFamilyProperty); set => SetValue(TitleFontFamilyProperty, value); }
         public static readonly BindableProperty TitleFontFamilyProperty = BindableProperty.Create("TitleFontFamily", typeof(string), typeof(string), "Arial");
 
-        public double TitleFontSize { get => _titleFontSize; set => _titleFontSize = value; }
+
+        public double TitleFontSize { get => (double)GetValue(TitleFontSizeProperty); set => SetValue(TitleFontSizeProperty, value); }
         public static readonly BindableProperty TitleFontSizeProperty = BindableProperty.Create("TitleFontSize", typeof(double), typeof(double), _titleFontSize);
 
-        public Color TitleTextColor { get => _titleTextColor; set => _titleTextColor = value; }
+        public Color TitleTextColor { get => (Color)GetValue(TitleTextColorProperty); set => SetValue(TitleTextColorProperty, value); }
         public static readonly BindableProperty TitleTextColorProperty = BindableProperty.Create("TitleTextColor", typeof(Color), typeof(Color), _titleTextColor);
 
-        public Color ContentBackgroundColor { get; set; }
-        public static readonly BindableProperty ContentBackgroundColorProperty = BindableProperty.Create("ContentBackgroundColor", typeof(Color), typeof(Color),Color.Transparent);
+        public Color ContentBackgroundColor { get => (Color)GetValue(ContentBackgroundColorProperty); set => SetValue(ContentBackgroundColorProperty, value); }
+        public static readonly BindableProperty ContentBackgroundColorProperty = BindableProperty.Create("ContentBackgroundColor", typeof(Color), typeof(Color), Color.Transparent);
 
-        public string FirstButtonText { get => _firstButtonText; set => _firstButtonText = value; }
+        public string FirstButtonText { get => (string)GetValue(FirstButtonTextProperty); set => SetValue(FirstButtonTextProperty, value); }
         public static readonly BindableProperty FirstButtonTextProperty = BindableProperty.Create("FirstButtonText", typeof(string), typeof(string), _firstButtonText);
 
-        public string PreviousButtonText { get => _previousButtonText; set => _previousButtonText = value; }
+        public string PreviousButtonText { get => (string)GetValue(PreviousButtonTextProperty); set => SetValue(PreviousButtonTextProperty, value); }
         public static readonly BindableProperty PreviousButtonTextProperty = BindableProperty.Create("PreviousButtonText", typeof(string), typeof(string), _previousButtonText);
 
-        public string NextButtonText { get => _nextButtonText; set => _nextButtonText = value; }
+        public string NextButtonText { get => (string)GetValue(NextButtonTextProperty); set => SetValue(NextButtonTextProperty, value); }
         public static readonly BindableProperty NextButtonTextProperty = BindableProperty.Create("NextButtonText", typeof(string), typeof(string), _nextButtonText);
 
-        public string LastButtonText { get => _lastButtonText; set => _lastButtonText = value; }
+        public string LastButtonText { get => (string)GetValue(LastButtonTextProperty); set => SetValue(LastButtonTextProperty, value); }
         public static readonly BindableProperty LastButtonTextProperty = BindableProperty.Create("LastButtonText", typeof(string), typeof(string), _lastButtonText);
 
-        public List<WizardStep> WizardSteps { get; set; }
-        public Thickness ContentPadding { get => _contentPadding; set => _contentPadding = value; }
+
+        public Thickness ContentPadding { get => (Thickness)GetValue(ContentPaddingProperty); set => SetValue(ContentPaddingProperty, value); }
         public static readonly BindableProperty ContentPaddingProperty = BindableProperty.Create("ContentPadding", typeof(Thickness), typeof(Thickness), _contentPadding);
 
 
+
+        public Color TitlebarBackgroundColor { get => (Color)GetValue(TitlebarBackgroundColorProperty); set => SetValue(TitlebarBackgroundColorProperty, value); }
+        public static readonly BindableProperty TitlebarBackgroundColorProperty = BindableProperty.Create("TitlebarBackgroundColor", typeof(Color), typeof(Color), _titlebarBackgroundColor);
+
+        public Color FooterBackgroundColor { get => (Color)GetValue(FooterBackgroundColorProperty); set => SetValue(FooterBackgroundColorProperty, value); }
+        public static readonly BindableProperty FooterBackgroundColorProperty = BindableProperty.Create("FooterBackgroundColor", typeof(Color), typeof(Color), _footerBackgroundColor);
+
+        public ImageSource TitileBackgroundImageSource { get => (ImageSource)GetValue(TitileBackgroundImageSourceProperty); set => SetValue(TitileBackgroundImageSourceProperty, value); }
+        public static readonly BindableProperty TitileBackgroundImageSourceProperty = BindableProperty.Create("TitileBackgroundImageSource", typeof(ImageSource), typeof(ImageSource), null);
+
+        public double TitlebarHeight { get => (double)GetValue(TitlebarHeightProperty); set => SetValue(TitlebarHeightProperty, value); }
+        public static readonly BindableProperty TitlebarHeightProperty = BindableProperty.Create("TitlebarHeight", typeof(double), typeof(double), _titlebarHeight);
+
+        public ImageSource ContentBackgroundImageSource { get => (ImageSource)GetValue(ContentBackgroundImageSourceProperty); set => SetValue(ContentBackgroundImageSourceProperty, value); }
+        public static readonly BindableProperty ContentBackgroundImageSourceProperty = BindableProperty.Create("ContentBackgroundImageSource", typeof(ImageSource), typeof(ImageSource), null);
+
+
+        public Thickness FooterPadding { get => (Thickness)GetValue(FooterPaddingProperty); set => SetValue(FooterPaddingProperty, value); }
+        public static readonly BindableProperty FooterPaddingProperty = BindableProperty.Create("FooterPadding", typeof(Thickness), typeof(Thickness), _footerPadding);
+
+        public double ButtonFontSize { get => (double)GetValue(ButtonFontSizeProperty); set => SetValue(ButtonFontSizeProperty, value); }
+        public static readonly BindableProperty ButtonFontSizeProperty = BindableProperty.Create("ButtonFontSize", typeof(double), typeof(double), _buttonFontSize);
+
+        public Color ButtonTextColor { get => (Color)GetValue(ButtonTextColorProperty); set => SetValue(ButtonTextColorProperty, value); }
+        public static readonly BindableProperty ButtonTextColorProperty = BindableProperty.Create("ButtonTextColor", typeof(Color), typeof(Color), _buttonTextColor);
+
+        public Color ButtonBackgroundColor { get => (Color)GetValue(ButtonBackgroundColorProperty); set => SetValue(ButtonBackgroundColorProperty, value); }
+        public static readonly BindableProperty ButtonBackgroundColorProperty = BindableProperty.Create("ButtonBackgroundColor", typeof(Color), typeof(Color), _buttonBackgroundColor);
+        public int ButtonCornerRadius { get => (int)GetValue(ButtonCornerRadiusProperty); set => SetValue(ButtonCornerRadiusProperty, value); }
+        public static readonly BindableProperty ButtonCornerRadiusProperty = BindableProperty.Create("ButtonCornerRadius", typeof(int), typeof(int), _buttonCornerRadius);
+
+
+
+        public View ContentBackgroundImage { get; private set; }
         public int ActiveIndex { get => _activeIndex; set => _activeIndex = value; }
 
         private StackLayout ContentLayout { get; set; }
@@ -306,36 +340,9 @@ namespace RSPLMarketSurvey.CustomControls
         public Button PreviousButton { get; private set; }
         public Button NextButton { get; private set; }
         public Button LastButton { get; private set; }
-        public Color TitlebarBackgroundColor { get => _titlebarBackgroundColor; set => _titlebarBackgroundColor = value; }
-        public static readonly BindableProperty TitlebarBackgroundColorProperty = BindableProperty.Create("TitlebarBackgroundColor", typeof(Color), typeof(Color), _titlebarBackgroundColor);
-
-        public Color FooterBackgroundColor { get => _footerBackgroundColor; set => _footerBackgroundColor = value; }
-        public static readonly BindableProperty FooterBackgroundColorProperty = BindableProperty.Create("FooterBackgroundColor", typeof(Color), typeof(Color), _footerBackgroundColor);
-
-        public ImageSource TitileBackgroundImageSource { get; set; }
-        public static readonly BindableProperty TitileBackgroundImageSourceProperty = BindableProperty.Create("TitileBackgroundImageSource", typeof(ImageSource), typeof(ImageSource), null);
-
-        public double TitlebarHeight { get => _titlebarHeight; set => _titlebarHeight = value; }
-        public static readonly BindableProperty TitlebarHeightProperty = BindableProperty.Create("TitlebarHeight", typeof(double), typeof(double), _titlebarHeight);
-
-        public ImageSource ContentBackgroundImageSource { get; set; }
-        public static readonly BindableProperty ContentBackgroundImageSourceProperty = BindableProperty.Create("ContentBackgroundImageSource", typeof(ImageSource), typeof(ImageSource), null);
-
-        public View ContentBackgroundImage { get; private set; }
-        public Thickness FooterPadding { get => _footerPadding; set => _footerPadding = value; }
-        public static readonly BindableProperty FooterPaddingProperty = BindableProperty.Create("FooterPadding", typeof(Thickness), typeof(Thickness), _footerPadding);
-
-        public double ButtonFontSize { get => _buttonFontSize; set => _buttonFontSize = value; }
-        public static readonly BindableProperty ButtonFontSizeProperty = BindableProperty.Create("ButtonFontSize", typeof(double), typeof(double), _buttonFontSize);
-
-        public Color ButtonTextColor { get => _buttonTextColor; set => _buttonTextColor = value; }
-        public static readonly BindableProperty ButtonTextColorProperty = BindableProperty.Create("ButtonTextColor", typeof(Color), typeof(Color), _buttonTextColor);
-
-        public Color ButtonBackgroundColor { get => _buttonBackgroundColor; set => _buttonBackgroundColor = value; }
-        public static readonly BindableProperty ButtonBackgroundColorProperty = BindableProperty.Create("ButtonBackgroundColor", typeof(Color), typeof(Color), _buttonBackgroundColor);
-        public int ButtonCornerRadius { get => _buttonCornerRadius; set => _buttonCornerRadius = value; }
-        public static readonly BindableProperty ButtonCornerRadiusProperty = BindableProperty.Create("ButtonCornerRadius", typeof(int), typeof(int), _buttonCornerRadius);
-
+        public List<WizardStep> WizardSteps { get; set; }
+        public ImageSource TitleIcon { get => _titleIcon; set => _titleIcon = value; }
+        public string TitleText { get; set; }
     }
 
     public class WizardStep
