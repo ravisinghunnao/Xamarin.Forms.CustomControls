@@ -27,7 +27,7 @@ namespace RSPLMarketSurvey.CustomControls
         private static ImageSource _collapseImage;
        
         private static bool _autoCollapseInactiveItems = true;
-       
+        private bool _initilized = false;
 
         public CollapsibleExpander()
         {
@@ -67,6 +67,7 @@ namespace RSPLMarketSurvey.CustomControls
                         item._Key = itemIndex.ToString();
 
                         StackLayout subContainer = new StackLayout { HorizontalOptions = LayoutOptions.FillAndExpand, IsClippedToBounds = true, Spacing = 0 };
+                        item._SubContainer = subContainer;
                         Grid grid = new Grid { HorizontalOptions = LayoutOptions.FillAndExpand, RowSpacing = 0, ColumnSpacing = 0 };
                         grid.RowDefinitions.Add(new RowDefinition { Height = TitleHeight });
                         grid.RowDefinitions.Add(new RowDefinition { });
@@ -123,6 +124,7 @@ namespace RSPLMarketSurvey.CustomControls
                     }
                 }
                 this.Content = mainContainer;
+                _initilized = true;
             }
             catch (Exception ex)
             {
@@ -132,42 +134,48 @@ namespace RSPLMarketSurvey.CustomControls
 
         }
 
+   
+
 
         private void ContentLayout_SizeChanged(object sender, EventArgs e)
         {
+            int itemIndex = Convert.ToInt32(((StackLayout)sender).StyleId.Split('_')[1]);
             ContentBackgroundImage.HeightRequest = ((StackLayout)sender).Height;
+           // ExpandableItems.Find(f=>f._Key==itemIndex.ToString())._SubContainer.HeightRequest= ((StackLayout)sender).Height;
             if (Animating == false)
             {
-                int itemIndex = Convert.ToInt32(((StackLayout)sender).StyleId.Split('_')[1]);
-                ExpandableItem expandableItem = ExpandableItems[itemIndex];
-                expandableItem.ItemHeight = expandableItem._ContentLayout.Height;
-
-                switch (ExpandMode)
+                if (!_initilized)
                 {
-                    case ExpandModeEnum.CollapseAll:
-                        expandableItem._ContentLayout.IsVisible = false;
-                        expandableItem.Expanded = false;
-                        break;
-                    case ExpandModeEnum.ExpandAll:
-                        expandableItem._ContentLayout.IsVisible = true;
-                        expandableItem.Expanded = true;
-                        break;
-                    case ExpandModeEnum.UserDefined:
-                        if (expandableItem.Expanded == false)
-                        {
+
+                    ExpandableItem expandableItem = ExpandableItems[itemIndex];
+                    expandableItem.ItemHeight = expandableItem._ContentLayout.Height;
+
+                    switch (ExpandMode)
+                    {
+                        case ExpandModeEnum.CollapseAll:
                             expandableItem._ContentLayout.IsVisible = false;
                             expandableItem.Expanded = false;
-                        }
-                        else
-                        {
+                            break;
+                        case ExpandModeEnum.ExpandAll:
                             expandableItem._ContentLayout.IsVisible = true;
                             expandableItem.Expanded = true;
-                        }
-                        break;
+                            break;
+                        case ExpandModeEnum.UserDefined:
+                            if (expandableItem.Expanded == false)
+                            {
+                                expandableItem._ContentLayout.IsVisible = false;
+                                expandableItem.Expanded = false;
+                            }
+                            else
+                            {
+                                expandableItem._ContentLayout.IsVisible = true;
+                                expandableItem.Expanded = true;
+                            }
+                            break;
+
+                    }
 
                 }
-
-
 
             }
 
@@ -460,5 +468,6 @@ namespace RSPLMarketSurvey.CustomControls
         public bool Expanded { get => _Expanded; set { _Expanded = value; _ContentBackgroundImage.IsVisible = _Expanded; } }
 
         public Image _TitleBackgroundImage { get; internal set; }
+        public StackLayout _SubContainer { get; internal set; }
     }
 }
