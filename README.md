@@ -30,4 +30,7 @@
   <br />10- Popup
    <br />
   <img src="popup.jpg" width=200px/>
-  <br />11- RectangleView<br />12- Validators<br />13- FieldView</p>
+  <br />11- RectangleView
+  <br />
+  <img src="rectangleview.jpg" width=200px/>
+  <br />12- Validators<br />13- FieldView</p>
