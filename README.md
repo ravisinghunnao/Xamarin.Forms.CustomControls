@@ -18,7 +18,10 @@
   <br />5- Window
    <br />
   <img src="window.jpg" width=200px/>
-  <br />6- Wizard<br />7- CollapsibleExpander
+  <br />6- Wizard
+    <br />
+  <img src="wizard.jpg" width=300px/>
+  <br />7- CollapsibleExpander
   <br />
   <img src="expander.jpg" width=200px/>
   <br />8- GradientView
