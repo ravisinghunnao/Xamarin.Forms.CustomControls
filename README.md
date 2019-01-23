@@ -1,17 +1,3 @@
 # Xamarin.Forms.CustomControls
-Custom controls for xamarin forms for rapid and pleasing development
-
-Controls Included:
-1- RadioButton
-2- Checkbox
-3- Stepper
-4- ImageButton
-5- Window
-6- Wizard
-7- CollapsibleExpander
-8- GradientView
-9- GradientContainer
-10- Popup
-11- RectangleView
-12- Validators
-13- FieldView
+<p>Custom controls for xamarin forms for rapid and pleasing development</p>
+<p>Controls Included:<br />1- RadioButton<br />2- Checkbox<br />3- Stepper<br />4- ImageButton<br />5- Window<br />6- Wizard<br />7- CollapsibleExpander<br />8- GradientView<br />9- GradientContainer<br />10- Popup<br />11- RectangleView<br />12- Validators<br />13- FieldView</p>
