@@ -1,5 +1,5 @@
 # Xamarin.Forms.CustomControls
-<p>Custom controls for xamarin forms for rapid and pleasing development</p>
+<p>Cross platform custom controls for xamarin forms for rapid and pleasing development</p>
 <p>Controls Included:<br />1- RadioButton
 
 <br />
