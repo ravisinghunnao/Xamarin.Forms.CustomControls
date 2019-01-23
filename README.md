@@ -2,7 +2,10 @@
 <p>Custom controls for xamarin forms for rapid and pleasing development</p>
 <p>Controls Included:<br />1- RadioButton
 
-<br />2- Checkbox
+<br />
+  <img src="screenshot-1548241447447.jpg" width=200px/>
+  <br />
+2- Checkbox
   <br />
   <img src="screenshot-1548241837975.jpg" width=200px/>
   
