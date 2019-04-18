@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace HS.Controls
+namespace NIFShopping.CustomControls
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FieldView : ContentView
@@ -81,22 +81,17 @@ namespace HS.Controls
             fieldView.FieldViewValue.Text = newValue.ToString();
         }
 
-        private Style _FieldNameStyle ;
-        public Style FieldNameStyle
-        {
-            get
-            {
-                return _FieldNameStyle;
-            }
-            set
-            {
-                _FieldNameStyle = value;
-                FieldViewColumn.Style =_FieldNameStyle;
-            }
-        }
+
+        public static BindableProperty FieldNameTextColorProperty = BindableProperty.Create("FieldNameTextColor", typeof(Color), typeof(Color), null, BindingMode.TwoWay, propertyChanged: HandleFieldNameTextColorChanged);
+        public Color FieldNameTextColor { get => (Color)GetValue(FieldNameTextColorProperty); set { SetValue(FieldNameTextColorProperty, value); } }
+
+        public static BindableProperty FieldValueTextColorProperty = BindableProperty.Create("FieldValueTextColor", typeof(Color), typeof(Color), null, BindingMode.TwoWay, propertyChanged: HandleFieldValueTextColorChanged);
+        public Color FieldValueTextColor { get => (Color)GetValue(FieldValueTextColorProperty); set { SetValue(FieldValueTextColorProperty, value); } }
 
 
-        
+        public static BindableProperty FieldNameStyleProperty = BindableProperty.Create("FieldNameStyle", typeof(Style), typeof(Style), null, BindingMode.TwoWay, propertyChanged: HandleFieldNameStyleChanged);
+        public Style FieldNameStyle { get => (Style)GetValue(FieldNameStyleProperty); set { SetValue(FieldNameStyleProperty, value); } }
+
 
         public static BindableProperty FieldValueStyleProperty = BindableProperty.Create("FieldValueStyle", typeof(Style), typeof(Style),null,BindingMode.TwoWay,propertyChanged: HandleFieldValueStyleChanged);
         public Style FieldValueStyle { get => (Style)GetValue(FieldValueStyleProperty); set  { SetValue(FieldValueStyleProperty, value); }  }
@@ -107,6 +102,28 @@ namespace HS.Controls
             FieldView fieldView = (FieldView)bindable;
             fieldView.FieldViewValue.Style = newValue as Style;
         }
+
+ private static void HandleFieldNameStyleChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+
+            FieldView fieldView = (FieldView)bindable;
+            fieldView.FieldViewColumn.Style = newValue as Style;
+        }
+
+ private static void HandleFieldNameTextColorChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+
+            FieldView fieldView = (FieldView)bindable;
+            fieldView.FieldViewColumn.TextColor =(Color) newValue ;
+        }
+
+        private static void HandleFieldValueTextColorChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+
+            FieldView fieldView = (FieldView)bindable;
+            fieldView.FieldViewValue.TextColor = (Color)newValue;
+        }
+
         private int _ColumnWidth = 125;
         public int ColumnWidth
         {
