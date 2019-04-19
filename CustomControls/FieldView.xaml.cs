@@ -28,7 +28,7 @@ namespace NIFShopping.CustomControls
             if (_RenderMode == RenderModeEnum.Horizontol)
             {
                 Grid grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = new GridLength(ColumnWidth, GridUnitType.Absolute) }, new ColumnDefinition { Width = new GridLength(50, GridUnitType.Star) } }, RowDefinitions = new RowDefinitionCollection { } };
-                
+
                 grid.Children.Add(FieldViewColumn);
                 grid.Children.Add(FieldViewValue);
                 Grid.SetColumn(FieldViewColumn, 0);
@@ -39,6 +39,19 @@ namespace NIFShopping.CustomControls
             {
                 slMain.Children.Add(FieldViewColumn);
                 slMain.Children.Add(FieldViewValue);
+            }
+        }
+
+        public LayoutOptions ValueHorizontolOption
+        {
+            get
+
+            {
+                return this.FieldViewValue.HorizontalOptions;
+            }
+            set
+            {
+                this.FieldViewValue.HorizontalOptions = value;
             }
         }
 
@@ -57,22 +70,22 @@ namespace NIFShopping.CustomControls
         }
 
 
-       
+
         public string FieldValue
         {
             get
             {
-               return GetValue(FieldValueProperty).ToString();
+                return GetValue(FieldValueProperty).ToString();
             }
             set
             {
                 SetValue(FieldValueProperty, value);
-                
+
             }
         }
 
-        
-        public static readonly BindableProperty FieldValueProperty = BindableProperty.Create("FieldValue", typeof(string), typeof(FieldView), "",BindingMode.TwoWay,propertyChanged:HandleFieldValuePropertyChanged);
+
+        public static readonly BindableProperty FieldValueProperty = BindableProperty.Create("FieldValue", typeof(string), typeof(FieldView), "", BindingMode.TwoWay, propertyChanged: HandleFieldValuePropertyChanged);
 
         private static void HandleFieldValuePropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
@@ -82,10 +95,10 @@ namespace NIFShopping.CustomControls
         }
 
 
-        public static BindableProperty FieldNameTextColorProperty = BindableProperty.Create("FieldNameTextColor", typeof(Color), typeof(Color), null, BindingMode.TwoWay, propertyChanged: HandleFieldNameTextColorChanged);
+        public static BindableProperty FieldNameTextColorProperty = BindableProperty.Create("FieldNameTextColor", typeof(Color), typeof(Color), Xamarin.Forms.Color.Black, BindingMode.TwoWay, propertyChanged: HandleFieldNameTextColorChanged);
         public Color FieldNameTextColor { get => (Color)GetValue(FieldNameTextColorProperty); set { SetValue(FieldNameTextColorProperty, value); } }
 
-        public static BindableProperty FieldValueTextColorProperty = BindableProperty.Create("FieldValueTextColor", typeof(Color), typeof(Color), null, BindingMode.TwoWay, propertyChanged: HandleFieldValueTextColorChanged);
+        public static BindableProperty FieldValueTextColorProperty = BindableProperty.Create("FieldValueTextColor", typeof(Color), typeof(Color), Xamarin.Forms.Color.Black, BindingMode.TwoWay, propertyChanged: HandleFieldValueTextColorChanged);
         public Color FieldValueTextColor { get => (Color)GetValue(FieldValueTextColorProperty); set { SetValue(FieldValueTextColorProperty, value); } }
 
 
@@ -93,8 +106,8 @@ namespace NIFShopping.CustomControls
         public Style FieldNameStyle { get => (Style)GetValue(FieldNameStyleProperty); set { SetValue(FieldNameStyleProperty, value); } }
 
 
-        public static BindableProperty FieldValueStyleProperty = BindableProperty.Create("FieldValueStyle", typeof(Style), typeof(Style),null,BindingMode.TwoWay,propertyChanged: HandleFieldValueStyleChanged);
-        public Style FieldValueStyle { get => (Style)GetValue(FieldValueStyleProperty); set  { SetValue(FieldValueStyleProperty, value); }  }
+        public static BindableProperty FieldValueStyleProperty = BindableProperty.Create("FieldValueStyle", typeof(Style), typeof(Style), null, BindingMode.TwoWay, propertyChanged: HandleFieldValueStyleChanged);
+        public Style FieldValueStyle { get => (Style)GetValue(FieldValueStyleProperty); set { SetValue(FieldValueStyleProperty, value); } }
 
         private static void HandleFieldValueStyleChanged(BindableObject bindable, object oldValue, object newValue)
         {
@@ -103,18 +116,18 @@ namespace NIFShopping.CustomControls
             fieldView.FieldViewValue.Style = newValue as Style;
         }
 
- private static void HandleFieldNameStyleChanged(BindableObject bindable, object oldValue, object newValue)
+        private static void HandleFieldNameStyleChanged(BindableObject bindable, object oldValue, object newValue)
         {
 
             FieldView fieldView = (FieldView)bindable;
             fieldView.FieldViewColumn.Style = newValue as Style;
         }
 
- private static void HandleFieldNameTextColorChanged(BindableObject bindable, object oldValue, object newValue)
+        private static void HandleFieldNameTextColorChanged(BindableObject bindable, object oldValue, object newValue)
         {
 
             FieldView fieldView = (FieldView)bindable;
-            fieldView.FieldViewColumn.TextColor =(Color) newValue ;
+            fieldView.FieldViewColumn.TextColor = (Color)newValue;
         }
 
         private static void HandleFieldValueTextColorChanged(BindableObject bindable, object oldValue, object newValue)
@@ -154,12 +167,12 @@ namespace NIFShopping.CustomControls
             }
         }
 
-        
+
 
         public enum RenderModeEnum
         {
-            Horizontol=0,
-            Vertical=1
+            Horizontol = 0,
+            Vertical = 1
         }
 
     }
