@@ -42,10 +42,10 @@
   <br /></p>
   15- TextBox
   <br />
-  <img src="TextBox/textbox.png" width=300px/>
+  <img src="CustomControls/TextBox/textbox.png" width=300px/>
   <br /></p>
    16- Dropdown
   <br />
-  <img src="dropdown/dropdown.png" width=300px/>
+  <img src="CustomControls/dropdown/dropdown.png" width=300px/>
   <br /></p>
   
