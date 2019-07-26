@@ -40,3 +40,12 @@
   <br />
   <img src="calendar.jpg" width=300px/>
   <br /></p>
+  15- TextBox
+  <br />
+  <img src="CustomControls/TextBox/textbox.png" width=300px/>
+  <br /></p>
+   16- Dropdown
+  <br />
+  <img src="CustomControls/dropdown/dropdown.png" width=300px/>
+  <br /></p>
+  
