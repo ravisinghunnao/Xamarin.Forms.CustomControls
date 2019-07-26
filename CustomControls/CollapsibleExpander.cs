@@ -25,9 +25,10 @@ namespace RSPLMarketSurvey.CustomControls
         private string _collapseImageBase64 = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAB+gAAAfoBF4pEbwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAALiSURBVFiFvZfNS1RRGMZ/58LYorI25dQiSILSIIq7ymkRbcQ+QGRQEMKFoDYtlSAXfhA6C0VRcNFWJFfq2v9AXA0kDWkws4pGHRjTqCbwaTGO3XGae+faTM/yfc85v4f3nnPueww+JekycBdoBM4chX8AH4CYMWbH75rlQK9IGpH0Ud6KSxqWFKwEuE7SW0k/ywCf1M+juXWnhT+QlDoF+KS+SLrvF/5S0q8KwPP6JSlSLvy5pMMKwvM6lNTpBX8kKVsFeF5ZSQ+dTOOA1wIfgX/fve76DNw0xhwAWI7Ea7/w9fV1VldXyWazfqZdBV4VRJQ7bvt+ajk9PS3btmXbtrq6urS/72v6V0mXnBWIAOfKsS+JsbExFhYWjmMbGxv09PSQyWTKrcJ54IXTQHu58Gg0ysrKSlFuc3OTSCTix0QYwEi6Qm5jeGp2dpb5+XnXMQ0NDczNzVFbW+u1nICgBdieIyXGx8eL4B0dHczMzFBTU3Mci8fjdHd3k06nvZY1gG0B173g0WiU5eXlIvjAwAChUIjJyckCE4lEgt7eXnZ3d71M1FvABTf41NRUSbgxuWukqamJiYmJAhPJZJK+vj4vExctt+zS0hKLi4sFsdbWVvr7+4/heYVCIYaHh7GsP0smk0mGhobcEFjAXqnk2tpaEXxwcLAA4lRzczOjo6MF+VgshqRSiIwFfCqVbWtrIxAIABAOh13hebW0tDAyMnL8Odrb24uq5dCW5zHc3t7m4OCA+vp6V/BJpVIp0uk0jY2NpYYICBoASXHgli/Cv+u9MeZOvp4LrkOro3dw9DtWrm/bIndH/w99BW4YY3YsAGNMCoj+JzjAm3z77mxIzpLr7a9VGZ4AbhtjvoOjITHGfAOeAd+qCN8DHufhf5WkTlWvKe0oy6akp5L2KgjPSHriq1aSbEnJCsATku75gjtMBCT1SNo5BXj7aG7gVPATRoLy/zgt601Y8i/hYqaiz/PfMZCSHuQmLlgAAAAASUVORK5CYII=";
         private static ImageSource _expandImage;
         private static ImageSource _collapseImage;
-       
+
         private static bool _autoCollapseInactiveItems = true;
-        private int _ExpandModeExecutionCount=0;
+        private int _ExpandModeExecutionCount = 0;
+        private List<StackLayout> ContentList=new List<StackLayout>();
 
         public CollapsibleExpander()
         {
@@ -48,11 +49,11 @@ namespace RSPLMarketSurvey.CustomControls
         protected override void OnParentSet()
         {
             base.OnParentSet();
-            init();
+            initAsync();
         }
 
 
-        public void init()
+        public async void initAsync()
         {
             try
             {
@@ -61,70 +62,81 @@ namespace RSPLMarketSurvey.CustomControls
                 if (ExpandableItems != null)
                 {
                     int itemIndex = 0;
-                    foreach (var item in ExpandableItems)
+                    await Task.Run( () =>
                     {
+                        foreach (var item in ExpandableItems)
+                        {
 
-                        item._Key = itemIndex.ToString();
+                            item._Key = itemIndex.ToString();
 
-                        StackLayout subContainer = new StackLayout { HorizontalOptions = LayoutOptions.FillAndExpand, IsClippedToBounds = true, Spacing = 0 };
-                        item._SubContainer = subContainer;
-                        Grid grid = new Grid { HorizontalOptions = LayoutOptions.FillAndExpand, RowSpacing = 0, ColumnSpacing = 0 };
-                        grid.RowDefinitions.Add(new RowDefinition { Height = TitleHeight });
-                        grid.RowDefinitions.Add(new RowDefinition { });
+                            StackLayout subContainer = new StackLayout { HorizontalOptions = LayoutOptions.FillAndExpand, IsClippedToBounds = true, Spacing = 0 };
+                            item._SubContainer = subContainer;
+                          
+                                Grid grid = new Grid { HorizontalOptions = LayoutOptions.FillAndExpand, RowSpacing = 0, ColumnSpacing = 0 };
+                                grid.RowDefinitions.Add(new RowDefinition { Height = TitleHeight });
+                                grid.RowDefinitions.Add(new RowDefinition { });
 
-                        StackLayout titleBar = new StackLayout { StyleId = "titlebar_" + itemIndex.ToString(), HeightRequest = TitleHeight, BackgroundColor = TitleBackColor, Orientation = StackOrientation.Horizontal, HorizontalOptions = LayoutOptions.FillAndExpand };
+                                StackLayout titleBar = new StackLayout { StyleId = "titlebar_" + itemIndex.ToString(), HeightRequest = TitleHeight, BackgroundColor = TitleBackColor, Orientation = StackOrientation.Horizontal, HorizontalOptions = LayoutOptions.FillAndExpand };
 
-                        item._TitleBarLayout = titleBar;
+                                item._TitleBarLayout = titleBar;
 
-                        TapGestureRecognizer titleBar_TapGestureRecognizer = new TapGestureRecognizer();
-                        titleBar_TapGestureRecognizer.Tapped += TitleBar_TapGestureRecognizer_Tapped;
-                        titleBar.GestureRecognizers.Add(titleBar_TapGestureRecognizer);
-                        Image image = new Image { Source = CollapseImage, WidthRequest = ImageWidth, HeightRequest = ImageHeight, Margin = new Thickness(5, 0, 0, 0) };
-                        item._TitleIcon = image;
-
-
-                        Label TitleLabel = new Label { Text = item.Title, TextColor = TitleTextColor, FontAttributes = TitleFontAttributes, FontFamily = TitleFontFamily, FontSize = TitleFontSize, LineBreakMode = LineBreakMode.TailTruncation };
-                        titleBar.Children.Add(image);
-                        titleBar.Children.Add(TitleLabel);
-                        StackLayout ContentLayout = new StackLayout { BackgroundColor = ContentBackgroundColor, StyleId = "content_" + itemIndex.ToString(), Padding = ContentPadding, HorizontalOptions = LayoutOptions.FillAndExpand };
-
-                        item._ContentLayout = ContentLayout;
-
-                        ContentLayout.SizeChanged += ContentLayout_SizeChanged;
-
-                        ContentLayout.Children.Add(item.Content);
-                        Image titleBackgroundImage = new Image { Source = TitleBackgroundImageSource, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, Aspect = Aspect.AspectFill };
-                        item._TitleBackgroundImage = titleBackgroundImage;
-                        grid.Children.Add(titleBackgroundImage);
-                        Grid.SetRow(titleBackgroundImage, 0);
-                        Grid.SetColumn(titleBackgroundImage, 0);
-                        grid.Children.Add(titleBar);
-                        Grid.SetRow(titleBar, 0);
-                        Grid.SetColumn(titleBar, 0);
-
-                        ContentBackgroundImage = new Image { Source = ContentBackgroundImageSource, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, Aspect = Aspect.AspectFill, HeightRequest = 0 };
-                        item._ContentBackgroundImage = ContentBackgroundImage;
+                                TapGestureRecognizer titleBar_TapGestureRecognizer = new TapGestureRecognizer();
+                                titleBar_TapGestureRecognizer.Tapped += TitleBar_TapGestureRecognizer_Tapped;
+                                titleBar.GestureRecognizers.Add(titleBar_TapGestureRecognizer);
+                                Image image = new Image { Source = CollapseImage, WidthRequest = ImageWidth, HeightRequest = ImageHeight, Margin = new Thickness(5, 0, 0, 0) };
+                                item._TitleIcon = image;
 
 
-                        grid.Children.Add(ContentBackgroundImage);
-                        Grid.SetColumn(ContentBackgroundImage, 0);
-                        Grid.SetRow(ContentBackgroundImage, 1);
-                        grid.Children.Add(ContentLayout);
-                        Grid.SetColumn(ContentLayout, 0);
-                        Grid.SetRow(ContentLayout, 1);
-                        subContainer.Children.Add(grid);
-                        mainContainer.Children.Add(subContainer);
+                                Label TitleLabel = new Label { Text = item.Title, TextColor = TitleTextColor, FontAttributes = TitleFontAttributes, FontFamily = TitleFontFamily, FontSize = TitleFontSize, LineBreakMode = LineBreakMode.TailTruncation };
+                                titleBar.Children.Add(image);
+                                titleBar.Children.Add(TitleLabel);
+                                StackLayout ContentLayout = new StackLayout { BackgroundColor = ContentBackgroundColor, StyleId = "content_" + itemIndex.ToString(), Padding = ContentPadding, HorizontalOptions = LayoutOptions.FillAndExpand };
+
+                                item._ContentLayout = ContentLayout;
+
+                                ContentLayout.SizeChanged += ContentLayout_SizeChanged;
+                            //ContentLayout.Children.Add(new ActivityIndicator {HorizontalOptions=LayoutOptions.Center,VerticalOptions=LayoutOptions.Center,IsVisible=true,IsRunning=true  });
+                            //  ContentLayout.Children.Add(item.Content);
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                ContentList.Add(ContentLayout);
+                            });
+
+                            Image titleBackgroundImage = new Image { Source = TitleBackgroundImageSource, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, Aspect = Aspect.AspectFill };
+                                item._TitleBackgroundImage = titleBackgroundImage;
+                                grid.Children.Add(titleBackgroundImage);
+                                Grid.SetRow(titleBackgroundImage, 0);
+                                Grid.SetColumn(titleBackgroundImage, 0);
+                                grid.Children.Add(titleBar);
+                                Grid.SetRow(titleBar, 0);
+                                Grid.SetColumn(titleBar, 0);
+
+                                ContentBackgroundImage = new Image { Source = ContentBackgroundImageSource, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, Aspect = Aspect.AspectFill, HeightRequest = 0 };
+                                item._ContentBackgroundImage = ContentBackgroundImage;
 
 
+                                grid.Children.Add(ContentBackgroundImage);
+                                Grid.SetColumn(ContentBackgroundImage, 0);
+                                Grid.SetRow(ContentBackgroundImage, 1);
+                                grid.Children.Add(ContentLayout);
+                                Grid.SetColumn(ContentLayout, 0);
+                                Grid.SetRow(ContentLayout, 1);
+                          
+                            subContainer.Children.Add(grid);
+
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                mainContainer.Children.Add(subContainer);
+                            });
 
 
+                            itemIndex += 1;
+                        }
+                    });
 
-
-                        itemIndex += 1;
-                    }
                 }
                 this.Content = mainContainer;
-               
+
             }
             catch (Exception ex)
             {
@@ -134,22 +146,22 @@ namespace RSPLMarketSurvey.CustomControls
 
         }
 
-   
+
 
 
         private void ContentLayout_SizeChanged(object sender, EventArgs e)
         {
             int itemIndex = Convert.ToInt32(((StackLayout)sender).StyleId.Split('_')[1]);
             ContentBackgroundImage.HeightRequest = ((StackLayout)sender).Height;
-           // ExpandableItems.Find(f=>f._Key==itemIndex.ToString())._SubContainer.HeightRequest= ((StackLayout)sender).Height;
+            // ExpandableItems.Find(f=>f._Key==itemIndex.ToString())._SubContainer.HeightRequest= ((StackLayout)sender).Height;
             if (Animating == false)
             {
-         
-                    ExpandableItem expandableItem = ExpandableItems[itemIndex];
-                    expandableItem.ItemHeight = expandableItem._ContentLayout.Height;
-                if (_ExpandModeExecutionCount <ExpandableItems.Count)
+
+                ExpandableItem expandableItem = ExpandableItems[itemIndex];
+                expandableItem.ItemHeight = expandableItem._ContentLayout.Height;
+                if (_ExpandModeExecutionCount < ExpandableItems.Count)
                 {
-                    
+
                     switch (ExpandMode)
                     {
                         case ExpandModeEnum.CollapseAll:
@@ -183,7 +195,7 @@ namespace RSPLMarketSurvey.CustomControls
 
         }
 
-        private void TitleBar_TapGestureRecognizer_Tapped(object sender, EventArgs e)
+        private async void TitleBar_TapGestureRecognizer_Tapped(object sender, EventArgs e)
         {
             try
             {
@@ -197,19 +209,7 @@ namespace RSPLMarketSurvey.CustomControls
 
 
 
-                if (AutoCollapseInactiveItems)
-                {
-                    foreach (var item in ExpandableItems)
-                    {
-                        if (Convert.ToInt32(item._Key) != itemIndex)
-                        {
-                            item._ContentLayout.IsVisible = false;
-                            item._TitleIcon.Source = CollapseImage;
-                            item.Expanded = false;
-                        }
-                    }
-                }
-
+              
 
                 ExpandableItem expandableItem = ExpandableItems.Find(f => f._Key == itemIndex.ToString());
                 ContentVisible = !expandableItem._ContentLayout.IsVisible;
@@ -217,7 +217,9 @@ namespace RSPLMarketSurvey.CustomControls
 
                 if (ContentVisible)
                 {
+                    await AddContent(expandableItem);
                     ShowExpandAnimation(expandableItem._ContentLayout);
+                 
 
 
                 }
@@ -235,6 +237,7 @@ namespace RSPLMarketSurvey.CustomControls
                 if (expandableItem.Expanded)
                 {
                     expandableItem._TitleIcon.Source = ExpandImage;
+                   
                 }
                 else
                 {
@@ -242,6 +245,18 @@ namespace RSPLMarketSurvey.CustomControls
                 }
 
 
+                if (AutoCollapseInactiveItems)
+                {
+                    foreach (var item in ExpandableItems)
+                    {
+                        if (Convert.ToInt32(item._Key) != itemIndex)
+                        {
+                            item._ContentLayout.IsVisible = false;
+                            item._TitleIcon.Source = CollapseImage;
+                            item.Expanded = false;
+                        }
+                    }
+                }
 
 
 
@@ -251,6 +266,28 @@ namespace RSPLMarketSurvey.CustomControls
 
                 throw;
             }
+        }
+
+        private async Task AddContent(ExpandableItem expandableItem)
+        {
+             
+            await Task.Run(()=> {
+                foreach (var item in ContentList)
+                {
+                    if (item.StyleId == "content_" + expandableItem._Key && item.Children.Count<=0 )
+                    {
+                        
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                              
+                                item.Children.Add(expandableItem.Content);
+                            });
+                      
+                        break;
+                    }
+                }
+            });
+            
         }
 
         private void ShowCollapseAnimation(View item)
@@ -409,45 +446,45 @@ namespace RSPLMarketSurvey.CustomControls
 
         public double BarSapcing { get => (double)GetValue(BarSapcingProperty); set => SetValue(BarSapcingProperty, value); }
         public static readonly BindableProperty BarSapcingProperty = BindableProperty.Create("BarSapcing", typeof(double), typeof(double), _barSapcing);
-        public ImageSource CollapseImage { get =>(ImageSource)GetValue(CollapseImageProperty); set => SetValue(CollapseImageProperty, value); }
+        public ImageSource CollapseImage { get => (ImageSource)GetValue(CollapseImageProperty); set => SetValue(CollapseImageProperty, value); }
         public static readonly BindableProperty CollapseImageProperty = BindableProperty.Create("CollapseImage", typeof(ImageSource), typeof(ImageSource), _collapseImage);
-        public Thickness ContentPadding { get => (Thickness)GetValue(ContentPaddingProperty); set => SetValue(ContentPaddingProperty,value); }
+        public Thickness ContentPadding { get => (Thickness)GetValue(ContentPaddingProperty); set => SetValue(ContentPaddingProperty, value); }
         public static readonly BindableProperty ContentPaddingProperty = BindableProperty.Create("ContentPadding", typeof(Thickness), typeof(Thickness), _contentPadding);
-        public bool AutoCollapseInactiveItems { get => (bool)GetValue(AutoCollapseInactiveItemsProperty); set => SetValue(AutoCollapseInactiveItemsProperty,value); }
+        public bool AutoCollapseInactiveItems { get => (bool)GetValue(AutoCollapseInactiveItemsProperty); set => SetValue(AutoCollapseInactiveItemsProperty, value); }
         public static readonly BindableProperty AutoCollapseInactiveItemsProperty = BindableProperty.Create("AutoCollapseInactiveItems", typeof(bool), typeof(bool), _autoCollapseInactiveItems);
         public ImageSource ExpandImage { get => (ImageSource)GetValue(ExpandImageProperty); set => SetValue(ExpandImageProperty, value); }
         public static readonly BindableProperty ExpandImageProperty = BindableProperty.Create("ExpandImage", typeof(ImageSource), typeof(ImageSource), _expandImage);
-        public double ImageHeight { get => (double)GetValue(ImageHeightProperty); set => SetValue(ImageHeightProperty,value); }
+        public double ImageHeight { get => (double)GetValue(ImageHeightProperty); set => SetValue(ImageHeightProperty, value); }
         public static readonly BindableProperty ImageHeightProperty = BindableProperty.Create("ImageHeight", typeof(double), typeof(double), _imageHeight);
-        public double ImageWidth { get => (double)GetValue(ImageWidthProperty); set => SetValue(ImageWidthProperty,value); }
+        public double ImageWidth { get => (double)GetValue(ImageWidthProperty); set => SetValue(ImageWidthProperty, value); }
         public static readonly BindableProperty ImageWidthProperty = BindableProperty.Create("ImageWidth", typeof(double), typeof(double), _imageWidth);
-        public Color TitleBackColor { get => (Color)GetValue(TitleBackColorProperty); set => SetValue(TitleBackColorProperty,value); }
+        public Color TitleBackColor { get => (Color)GetValue(TitleBackColorProperty); set => SetValue(TitleBackColorProperty, value); }
         public static readonly BindableProperty TitleBackColorProperty = BindableProperty.Create("TitleBackColor", typeof(Color), typeof(Color), _titleBackColor);
         public FontAttributes TitleFontAttributes { get => (FontAttributes)GetValue(TitleFontAttributesProperty); set => SetValue(TitleFontAttributesProperty, value); }
         public static readonly BindableProperty TitleFontAttributesProperty = BindableProperty.Create("TitleFontAttributes", typeof(FontAttributes), typeof(FontAttributes), _titleFontAttributes);
         public double TitleFontSize { get => (double)GetValue(TitleFontSizeProperty); set => SetValue(TitleFontSizeProperty, value); }
         public static readonly BindableProperty TitleFontSizeProperty = BindableProperty.Create("TitleFontSize", typeof(double), typeof(double), _titleFontSize);
-        public double TitleHeight { get => (double)GetValue(TitleHeightProperty); set => SetValue(TitleHeightProperty,value); }
+        public double TitleHeight { get => (double)GetValue(TitleHeightProperty); set => SetValue(TitleHeightProperty, value); }
         public static readonly BindableProperty TitleHeightProperty = BindableProperty.Create("TitleHeight", typeof(double), typeof(double), _titleHeight);
-        public Color TitleTextColor { get => (Color)GetValue(TitleTextColorProperty); set => SetValue(TitleTextColorProperty,value); }
+        public Color TitleTextColor { get => (Color)GetValue(TitleTextColorProperty); set => SetValue(TitleTextColorProperty, value); }
         public static readonly BindableProperty TitleTextColorProperty = BindableProperty.Create("TitleTextColor", typeof(Color), typeof(Color), _titleTextColor);
-        public ExpandModeEnum ExpandMode { get =>(ExpandModeEnum)GetValue(ExpandModeProperty); set=>SetValue(ExpandModeProperty,value); }
+        public ExpandModeEnum ExpandMode { get => (ExpandModeEnum)GetValue(ExpandModeProperty); set => SetValue(ExpandModeProperty, value); }
         public static readonly BindableProperty ExpandModeProperty = BindableProperty.Create("ExpandMode", typeof(ExpandModeEnum), typeof(ExpandModeEnum), ExpandModeEnum.CollapseAll);
         public string Title { get; set; }
 
         public List<ExpandableItem> ExpandableItems { get; set; }
 
-        public string TitleFontFamily { get=>(string)GetValue(TitleFontFamilyProperty); set=>SetValue(TitleFontFamilyProperty,value); }
+        public string TitleFontFamily { get => (string)GetValue(TitleFontFamilyProperty); set => SetValue(TitleFontFamilyProperty, value); }
         public static readonly BindableProperty TitleFontFamilyProperty = BindableProperty.Create("TitleFontFamily", typeof(string), typeof(string), "Arial");
-        public AnimationEnum ExpandAnimation { get=>(AnimationEnum)GetValue(ExpandAnimationProperty); set=>SetValue(ExpandAnimationProperty,value); }
+        public AnimationEnum ExpandAnimation { get => (AnimationEnum)GetValue(ExpandAnimationProperty); set => SetValue(ExpandAnimationProperty, value); }
         public static readonly BindableProperty ExpandAnimationProperty = BindableProperty.Create("ExpandAnimation", typeof(AnimationEnum), typeof(AnimationEnum), AnimationEnum.Resize);
-        public AnimationEnum CollapseAnimation { get=>(AnimationEnum)GetValue(CollapseAnimationProperty); set=>SetValue(CollapseAnimationProperty,value); }
+        public AnimationEnum CollapseAnimation { get => (AnimationEnum)GetValue(CollapseAnimationProperty); set => SetValue(CollapseAnimationProperty, value); }
         public static readonly BindableProperty CollapseAnimationProperty = BindableProperty.Create("CollapseAnimation", typeof(AnimationEnum), typeof(AnimationEnum), AnimationEnum.Resize);
-        public Color ContentBackgroundColor { get=>(Color)GetValue(ContentBackgroundColorProperty); set=>SetValue(ContentBackgroundColorProperty,value); }
+        public Color ContentBackgroundColor { get => (Color)GetValue(ContentBackgroundColorProperty); set => SetValue(ContentBackgroundColorProperty, value); }
         public static readonly BindableProperty ContentBackgroundColorProperty = BindableProperty.Create("ContentBackgroundColor", typeof(Color), typeof(Color), Color.Transparent);
-        public ImageSource ContentBackgroundImageSource { get=>(ImageSource)GetValue(ContentBackgroundImageSourceProperty); set=>SetValue(ContentBackgroundImageSourceProperty,value); }
+        public ImageSource ContentBackgroundImageSource { get => (ImageSource)GetValue(ContentBackgroundImageSourceProperty); set => SetValue(ContentBackgroundImageSourceProperty, value); }
         public static readonly BindableProperty ContentBackgroundImageSourceProperty = BindableProperty.Create("ContentBackgroundImageSource", typeof(ImageSource), typeof(ImageSource), null);
-        public ImageSource TitleBackgroundImageSource { get=>(ImageSource)GetValue(TitleBackgroundImageSourceProperty); set=>SetValue(TitleBackgroundImageSourceProperty,value); }
+        public ImageSource TitleBackgroundImageSource { get => (ImageSource)GetValue(TitleBackgroundImageSourceProperty); set => SetValue(TitleBackgroundImageSourceProperty, value); }
         public static readonly BindableProperty TitleBackgroundImageSourceProperty = BindableProperty.Create("TitleBackgroundImageSource", typeof(ImageSource), typeof(ImageSource), null);
 
 
